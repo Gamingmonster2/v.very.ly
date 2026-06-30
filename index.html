@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Tactical Precision Range - V1</title>
+    <title>Tactical Precision Range - V2</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
@@ -31,57 +31,97 @@
             z-index: 1;
         }
 
-        /* Settings Menu (Top-Left) */
-        #settings-menu {
+        /* Collapsible Settings Menu (Top-Left) */
+        #settings-container {
             position: absolute;
             top: 15px;
             left: 15px;
-            background: rgba(10, 15, 26, 0.85);
+            z-index: 110;
+            pointer-events: auto;
+            font-family: 'Orbitron', sans-serif;
+        }
+        #settings-toggle {
+            background: rgba(10, 15, 26, 0.9);
+            border: 1px solid rgba(0, 240, 255, 0.4);
+            color: #00f0ff;
+            padding: 8px 16px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            border-radius: 4px;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        #settings-toggle:hover {
+            background: rgba(0, 240, 255, 0.15);
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.4);
+        }
+        #settings-toggle::after {
+            content: '▼';
+            font-size: 0.6rem;
+            transition: transform 0.2s ease;
+        }
+        #settings-container.expanded #settings-toggle::after {
+            transform: rotate(180deg);
+        }
+        #settings-menu {
+            margin-top: 8px;
+            background: rgba(10, 15, 26, 0.95);
             border: 1px solid rgba(0, 240, 255, 0.3);
             border-radius: 6px;
-            padding: 12px;
-            z-index: 110;
-            backdrop-filter: blur(8px);
-            width: 220px;
-            pointer-events: auto;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            padding: 15px;
+            backdrop-filter: blur(10px);
+            width: 250px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+            display: none;
+            flex-direction: column;
+            gap: 12px;
+        }
+        #settings-container.expanded #settings-menu {
+            display: flex;
         }
         .settings-title {
-            font-family: 'Orbitron', sans-serif;
             font-size: 0.8rem;
             font-weight: 700;
             letter-spacing: 1px;
             color: #00f0ff;
-            margin-bottom: 10px;
             border-bottom: 1px solid rgba(0, 240, 255, 0.2);
-            padding-bottom: 4px;
+            padding-bottom: 6px;
             text-transform: uppercase;
         }
         .settings-row {
-            margin-bottom: 10px;
-        }
-        .settings-row:last-child {
-            margin-bottom: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
         }
         .settings-label {
-            font-size: 0.7rem;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.75rem;
             color: #7a8fa8;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            display: block;
-            margin-bottom: 4px;
+            font-weight: 600;
         }
         .settings-select {
             width: 100%;
             background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(0, 240, 255, 0.2);
+            border: 1px solid rgba(0, 240, 255, 0.25);
             color: #fff;
-            padding: 6px;
+            padding: 8px;
             border-radius: 4px;
             font-family: 'Rajdhani', sans-serif;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             outline: none;
             cursor: pointer;
+            transition: border-color 0.2s;
+        }
+        .settings-select:focus {
+            border-color: #00f0ff;
         }
         .settings-select option {
             background: #0a0f1a;
@@ -90,13 +130,13 @@
         .settings-timer-group {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 5px;
+            gap: 6px;
         }
         .settings-timer-btn {
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(0, 240, 255, 0.2);
             color: #7a8fa8;
-            padding: 5px;
+            padding: 6px;
             border-radius: 4px;
             font-family: 'Orbitron', sans-serif;
             font-size: 0.75rem;
@@ -117,7 +157,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: url('./b-background.png'), radial-gradient(circle at center, #1a2333 0%, #0d1117 100%);
+            background: radial-gradient(circle at center, #1a2333 0%, #0d1117 100%);
             background-size: cover;
             background-position: center;
             z-index: 100;
@@ -142,7 +182,7 @@
             font-family: 'Orbitron', sans-serif;
             font-size: 2.8rem;
             font-weight: 900;
-            letter-spacing: 0.5rem;
+            letter-spacing: 0.3rem;
             color: #00f0ff;
             text-shadow: 0 0 20px rgba(0, 240, 255, 0.5);
             margin-bottom: 5px;
@@ -448,50 +488,40 @@
             opacity: 1;
             transform: translateX(-50%) translateY(-15px);
         }
-
-        /* Interactive Upgrade Notification */
-        #upgrade-alert {
-            position: absolute;
-            bottom: 120px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0, 240, 255, 0.15);
-            border: 1px solid #00f0ff;
-            padding: 10px 20px;
-            border-radius: 4px;
-            font-family: 'Orbitron', sans-serif;
-            color: #fff;
-            text-shadow: 0 0 10px #00f0ff;
-            font-size: 0.9rem;
-            letter-spacing: 1px;
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            z-index: 80;
-        }
-        #upgrade-alert.show {
-            opacity: 1;
-        }
     </style>
 </head>
 <body>
 
-    <!-- Settings Menu (Top-Left) -->
-    <div id="settings-menu">
-        <div class="settings-title">Precision Config</div>
-        <div class="settings-row">
-            <span class="settings-label">Weapon / Audio Profile</span>
-            <select id="settings-weapon-select" class="settings-select">
-                <option value="pistol">Pistol (gun-shot-1.mp3)</option>
-                <option value="rapid">Rapid Fire (gun-fire-2.mp3)</option>
-            </select>
-        </div>
-        <div class="settings-row">
-            <span class="settings-label">Mission Time</span>
-            <div class="settings-timer-group">
-                <button class="settings-timer-btn active" data-time="60">1M</button>
-                <button class="settings-timer-btn" data-time="120">2M</button>
-                <button class="settings-timer-btn" data-time="180">3M</button>
+    <!-- Collapsible Settings Menu (Top-Left) -->
+    <div id="settings-container">
+        <button id="settings-toggle">Settings</button>
+        <div id="settings-menu">
+            <div class="settings-title">Precision Config</div>
+            
+            <div class="settings-row">
+                <span class="settings-label">Active Weapon</span>
+                <select id="settings-weapon-select" class="settings-select">
+                    <option value="sm_gun.glb">SMG (sm_gun.glb)</option>
+                    <option value="hand_gun.glb">Pistol (hand_gun.glb)</option>
+                    <option value="sci-fi_pistol.glb">Sci-Fi Pistol (sci-fi_pistol.glb)</option>
+                </select>
+            </div>
+
+            <div class="settings-row">
+                <span class="settings-label">Audio Profile</span>
+                <select id="settings-audio-select" class="settings-select">
+                    <option value="rapid">Rapid Fire (gun-fire-2.mp3)</option>
+                    <option value="pistol">Pistol Shot (gun-shot-1.mp3)</option>
+                </select>
+            </div>
+
+            <div class="settings-row">
+                <span class="settings-label">Mission Time</span>
+                <div class="settings-timer-group">
+                    <button class="settings-timer-btn active" data-time="60">1M</button>
+                    <button class="settings-timer-btn" data-time="120">2M</button>
+                    <button class="settings-timer-btn" data-time="180">3M</button>
+                </div>
             </div>
         </div>
     </div>
@@ -499,8 +529,8 @@
     <!-- Splash / Setup Screen -->
     <div id="splash-screen">
         <div class="splash-card">
-            <h1 class="splash-title">TACTICAL V1</h1>
-            <p class="splash-subtitle">Daylight Precision Range</p>
+            <h1 class="splash-title">TACTICAL V2</h1>
+            <p class="splash-subtitle">Weapon Management Range</p>
             
             <div id="preloader">
                 <button class="btn-action" id="btn-start-load">INITIALIZE SIMULATION</button>
@@ -545,7 +575,7 @@
         <div class="hud-bottom-row">
             <div class="weapon-display">
                 <div class="weapon-display-title">Active Armament</div>
-                <div class="weapon-display-name" id="hud-weapon-name">Semi-Auto Pistol</div>
+                <div class="weapon-display-name" id="hud-weapon-name">SMG Tactical</div>
             </div>
 
             <div style="text-align: right; color: #7a8fa8; font-size: 0.85rem; pointer-events: auto; background: rgba(5,7,10,0.8); padding: 8px 12px; border-radius: 6px;">
@@ -584,7 +614,6 @@
     <div id="crosshair"></div>
     <div id="hit-indicator"></div>
     <div id="hit-toast">BULLSEYE!</div>
-    <div id="upgrade-alert">HIGH SCORE! SCI-FI WEAPON SYSTEM UNLOCKED</div>
 
     <div id="canvas-container"></div>
 
@@ -593,7 +622,38 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
 
     <script>
-        // --- SOUND CONTROLLER (Strict 'Audio-Stop-Before-Play' enforcement) ---
+        // --- WEAPON CONFIGURATIONS (Alignment & Tuning) ---
+        const WEAPON_CONFIGS = {
+            "sm_gun.glb": {
+                name: "SMG Tactical",
+                audio: "rapid",
+                position: { x: 0.0, y: -0.12, z: -0.32 }, // Centered perfectly for accurate aiming
+                rotation: { x: 0, y: Math.PI, z: 0 },
+                scale: 0.28,
+                fireRate: 140,
+                color: 0x00f0ff
+            },
+            "hand_gun.glb": {
+                name: "Tactical Pistol",
+                audio: "pistol",
+                position: { x: 0.08, y: -0.15, z: -0.38 }, // Offset slightly to the right
+                rotation: { x: 0, y: Math.PI, z: 0 },
+                scale: 0.32,
+                fireRate: 300,
+                color: 0xffaa00
+            },
+            "sci-fi_pistol.glb": {
+                name: "Sci-Fi Laser Pistol",
+                audio: "rapid",
+                position: { x: 0.08, y: -0.15, z: -0.38 },
+                rotation: { x: 0, y: Math.PI, z: 0 },
+                scale: 0.32,
+                fireRate: 200,
+                color: 0xff0055
+            }
+        };
+
+        // --- SOUND CONTROLLER ---
         class SoundController {
             constructor() {
                 this.audioObjects = {
@@ -604,7 +664,6 @@
             }
 
             play(type) {
-                // Strict audio-stop-before-play requirement
                 if (this.activeAudio) {
                     this.activeAudio.pause();
                     this.activeAudio.currentTime = 0;
@@ -615,7 +674,7 @@
                     this.activeAudio = audio;
                     audio.currentTime = 0;
                     audio.play().catch(e => {
-                        console.warn("Audio playback deferred or file not found. Ensure assets exist locally.");
+                        console.warn("Audio playback deferred or asset file missing.");
                     });
                 }
             }
@@ -628,16 +687,13 @@
             score: 0,
             shotsFired: 0,
             shotsHit: 0,
-            duration: 60, // Default 1 min
+            duration: 60,
             timeLeft: 60,
             isPlaying: false,
             controlsLocked: false,
-            currentWeapon: 'pistol', // 'pistol' or 'rapid'
-            isUpgraded: false,
-            isUpgrading: false,
+            currentWeaponId: "sm_gun.glb",
+            currentAudioProfile: "rapid",
             lastFireTime: 0,
-            fireRate: 350, // ms between shots
-            rapidFireRate: 150,
             mouseIsDown: false
         };
 
@@ -646,23 +702,41 @@
         let weaponGroup, weaponMesh, muzzleFlash, muzzleFlashLight;
         let targetMesh = null;
         let hitParticles = [];
-        let upgradeWeaponMesh = null;
+        let gltfLoader;
 
-        // --- CAMERA LOOK & AIM ROTATIONS (With Lerping) ---
-        let targetPitch = 0;
-        let targetYaw = 0;
-        let currentPitch = 0;
-        let currentYaw = 0;
+        // --- CAMERA LOOK & AIM ROTATIONS ---
+        let targetPitch = 0, targetYaw = 0;
+        let currentPitch = 0, currentYaw = 0;
 
         // Touch aiming state
         let isTouchActive = false;
-        let lastTouchX = 0;
-        let lastTouchY = 0;
+        let lastTouchX = 0, lastTouchY = 0;
 
-        // --- SETTINGS UI SYNCING ---
+        // --- COLLAPSIBLE SETTINGS LOGIC ---
+        const settingsContainer = document.getElementById('settings-container');
+        const settingsToggle = document.getElementById('settings-toggle');
+
+        settingsToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            settingsContainer.classList.toggle('expanded');
+        });
+
+        // Close settings when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!settingsContainer.contains(e.target)) {
+                settingsContainer.classList.remove('expanded');
+            }
+        });
+
+        // --- SETTINGS UI INPUT HANDLERS ---
         const wpnSelect = document.getElementById('settings-weapon-select');
         wpnSelect.addEventListener('change', (e) => {
-            selectWeapon(e.target.value);
+            switchWeapon(e.target.value);
+        });
+
+        const audioSelect = document.getElementById('settings-audio-select');
+        audioSelect.addEventListener('change', (e) => {
+            state.currentAudioProfile = e.target.value;
         });
 
         const settingsTimerBtns = document.querySelectorAll('.settings-timer-btn');
@@ -691,7 +765,7 @@
             const loaderText = document.getElementById('loader-text');
 
             let loadedCount = 0;
-            const totalAssets = 2; // Models loaded initially
+            const totalAssets = 2; // Default weapon & Target
 
             function updateProgress() {
                 loadedCount++;
@@ -713,26 +787,15 @@
                 }
             }
 
-            // Init 3D Engine
             initEngine();
+            gltfLoader = new THREE.GLTFLoader();
 
-            const gltfLoader = new THREE.GLTFLoader();
+            // Load Primary Default Weapon ("sm_gun.glb")
+            loadWeaponAsset("sm_gun.glb", () => {
+                updateProgress();
+            });
 
-            // 1. Preload hand_gun.glb
-            gltfLoader.load('./hand_gun.glb', 
-                (gltf) => {
-                    setupWeaponModel(gltf.scene);
-                    updateProgress();
-                },
-                undefined,
-                (err) => {
-                    console.warn("Could not find hand_gun.glb, building procedural alternative.");
-                    buildProceduralHandgun();
-                    updateProgress();
-                }
-            );
-
-            // 2. Preload shooting_range_target.glb
+            // Load Target Field
             gltfLoader.load('./shooting_range_target.glb', 
                 (gltf) => {
                     setupTargetModel(gltf.scene);
@@ -747,73 +810,122 @@
             );
         }
 
-        // --- HIGH SCORE SCI-FI WEAPON SYSTEM UPGRADE ---
-        function triggerWeaponUpgrade() {
-            if (state.isUpgraded || state.isUpgrading) return;
-            state.isUpgrading = true;
+        // --- WEAPON ASSET MANAGEMENT & DISPOSAL ---
+        function switchWeapon(filename) {
+            if (state.currentWeaponId === filename && weaponMesh) return;
+            state.currentWeaponId = filename;
 
-            const alertBox = document.getElementById('upgrade-alert');
-            alertBox.classList.add('show');
+            // Update UI/Audio Profiling Sync
+            const config = WEAPON_CONFIGS[filename];
+            state.currentAudioProfile = config.audio;
+            audioSelect.value = config.audio;
+            document.getElementById('hud-weapon-name').innerText = config.name;
 
-            const gltfLoader = new THREE.GLTFLoader();
-            gltfLoader.load('./sci-fi_pistol.glb',
+            // Load weapon asset
+            loadWeaponAsset(filename);
+        }
+
+        function loadWeaponAsset(filename, callback) {
+            // Clean/dispose old weapon model to preserve memory
+            if (weaponMesh) {
+                disposeHierarchy(weaponMesh);
+                weaponGroup.remove(weaponMesh);
+                weaponMesh = null;
+            }
+
+            gltfLoader.load(`./${filename}`,
                 (gltf) => {
-                    upgradeWeaponMesh = gltf.scene;
-                    applyUpgradeMesh();
-                    setTimeout(() => alertBox.classList.remove('show'), 3000);
+                    setupWeaponMesh(gltf.scene, filename);
+                    if (callback) callback();
                 },
                 undefined,
                 (err) => {
-                    console.warn("Could not load sci-fi_pistol.glb, upgrading to procedural futuristic weapon.");
-                    buildProceduralSciFiPistol();
-                    applyUpgradeMesh();
-                    setTimeout(() => alertBox.classList.remove('show'), 3000);
+                    console.warn(`Could not load ${filename}, building procedural fallback.`);
+                    buildProceduralWeapon(filename);
+                    if (callback) callback();
                 }
             );
         }
 
-        function applyUpgradeMesh() {
-            if (weaponMesh) {
-                weaponGroup.remove(weaponMesh);
-            }
-            
-            // Normalize & Scale upgrade mesh
-            const box = new THREE.Box3().setFromObject(upgradeWeaponMesh);
+        function disposeHierarchy(obj) {
+            obj.traverse((child) => {
+                if (child.isMesh) {
+                    if (child.geometry) child.geometry.dispose();
+                    if (child.material) {
+                        if (Array.isArray(child.material)) {
+                            child.material.forEach(mat => mat.dispose());
+                        } else {
+                            child.material.dispose();
+                        }
+                    }
+                }
+            });
+        }
+
+        function setupWeaponMesh(model, filename) {
+            weaponMesh = model;
+            const config = WEAPON_CONFIGS[filename];
+
+            // Setup bounding scale normalization
+            const box = new THREE.Box3().setFromObject(weaponMesh);
             const size = box.getSize(new THREE.Vector3());
             const maxDim = Math.max(size.x, size.y, size.z);
-            const scaleFactor = 0.35 / maxDim;
+            const scaleFactor = config.scale / maxDim;
             
-            upgradeWeaponMesh.scale.set(scaleFactor, scaleFactor, scaleFactor);
-            upgradeWeaponMesh.position.set(0.18, -0.22, -0.45);
-            upgradeWeaponMesh.rotation.set(0, Math.PI, 0);
+            weaponMesh.scale.set(scaleFactor, scaleFactor, scaleFactor);
+            weaponMesh.position.set(config.position.x, config.position.y, config.position.z);
+            weaponMesh.rotation.set(config.rotation.x, config.rotation.y, config.rotation.z);
 
-            // Ensure daylight textures show perfectly
-            upgradeWeaponMesh.traverse((child) => {
+            weaponMesh.traverse((child) => {
                 if (child.isMesh) {
                     child.castShadow = true;
                     child.receiveShadow = true;
                     if (child.material) {
-                        child.material.metalness = 0.9;
-                        child.material.roughness = 0.1;
+                        child.material.metalness = 0.8;
+                        child.material.roughness = 0.2;
                     }
                 }
             });
 
-            weaponMesh = upgradeWeaponMesh;
             weaponGroup.add(weaponMesh);
+        }
 
-            state.isUpgraded = true;
-            state.isUpgrading = false;
+        function buildProceduralWeapon(filename) {
+            weaponMesh = new THREE.Group();
+            const config = WEAPON_CONFIGS[filename];
+
+            const slideMat = new THREE.MeshStandardMaterial({ 
+                color: config.color, 
+                metalness: 0.9, 
+                roughness: 0.15 
+            });
+            const gripMat = new THREE.MeshStandardMaterial({ 
+                color: 0x0a0c0e, 
+                metalness: 0.2, 
+                roughness: 0.7 
+            });
+
+            // Slide
+            const slide = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.06, 0.35), slideMat);
+            weaponMesh.add(slide);
+
+            // Grip
+            const grip = new THREE.Mesh(new THREE.BoxGeometry(0.038, 0.14, 0.06), gripMat);
+            grip.position.set(0, -0.08, 0.05);
+            grip.rotation.x = Math.PI / 8;
+            weaponMesh.add(grip);
+
+            weaponMesh.position.set(config.position.x, config.position.y, config.position.z);
+            weaponMesh.rotation.set(config.rotation.x, config.rotation.y, config.rotation.z);
             
-            document.getElementById('hud-weapon-name').innerText = "V2 Sci-Fi Eliminator";
-            triggerHitIndicator(true);
+            weaponGroup.add(weaponMesh);
         }
 
         // --- THREE.JS ENGINE SETUP ---
         function initEngine() {
             scene = new THREE.Scene();
             
-            // Enhanced Daylight Mode
+            // Daylight Mode
             scene.background = new THREE.Color(0xe0eaf5);
             scene.fog = new THREE.FogExp2(0xe0eaf5, 0.015);
 
@@ -831,7 +943,7 @@
             document.getElementById('canvas-container').appendChild(renderer.domElement);
             clock = new THREE.Clock();
 
-            // --- DAYLIGHT LIGHTING ---
+            // Daylight Lighting
             const ambientLight = new THREE.AmbientLight(0xffffff, 1.1);
             scene.add(ambientLight);
 
@@ -868,7 +980,7 @@
                 side: THREE.DoubleSide
             });
             muzzleFlash = new THREE.LineSegments(flashGeo, flashMat);
-            muzzleFlash.position.set(0.18, -0.15, -0.65);
+            muzzleFlash.position.set(0, -0.1, -0.55);
             weaponGroup.add(muzzleFlash);
 
             muzzleFlashLight = new THREE.PointLight(0xffaa00, 0, 4);
@@ -881,7 +993,7 @@
             window.addEventListener('resize', onWindowResize);
         }
 
-        // --- PROCEDURAL ENVIRONMENT ---
+        // --- ENVIRONMENT SETUP ---
         function buildEnvironment() {
             // Concrete Range Floor
             const floorGeo = new THREE.PlaneGeometry(60, 100);
@@ -900,7 +1012,7 @@
             grid.position.y = 0.01;
             scene.add(grid);
 
-            // Daylight Concrete Range Walls
+            // Concrete Range Walls
             const wallGeo = new THREE.PlaneGeometry(100, 15);
             const wallMat = new THREE.MeshStandardMaterial({
                 color: 0xa8b8c8,
@@ -926,70 +1038,7 @@
             scene.add(backWall);
         }
 
-        // --- WEAPON SETUP & FALLBACKS ---
-        function setupWeaponModel(model) {
-            weaponMesh = model;
-            const box = new THREE.Box3().setFromObject(weaponMesh);
-            const size = box.getSize(new THREE.Vector3());
-            const maxDim = Math.max(size.x, size.y, size.z);
-            const scaleFactor = 0.35 / maxDim;
-            
-            weaponMesh.scale.set(scaleFactor, scaleFactor, scaleFactor);
-            weaponMesh.position.set(0.18, -0.22, -0.45);
-            weaponMesh.rotation.set(0, Math.PI, 0);
-
-            weaponMesh.traverse((child) => {
-                if (child.isMesh) {
-                    child.castShadow = true;
-                    child.receiveShadow = true;
-                    if (child.material) {
-                        child.material.metalness = 0.7;
-                        child.material.roughness = 0.3;
-                    }
-                }
-            });
-            weaponGroup.add(weaponMesh);
-        }
-
-        function buildProceduralHandgun() {
-            weaponMesh = new THREE.Group();
-            
-            const slide = new THREE.Mesh(
-                new THREE.BoxGeometry(0.05, 0.07, 0.3),
-                new THREE.MeshStandardMaterial({ color: 0x1f2326, metalness: 0.8, roughness: 0.2 })
-            );
-            weaponMesh.add(slide);
-
-            const grip = new THREE.Mesh(
-                new THREE.BoxGeometry(0.045, 0.15, 0.07),
-                new THREE.MeshStandardMaterial({ color: 0x0a0c0e, metalness: 0.2, roughness: 0.7 })
-            );
-            grip.position.set(0, -0.09, 0.05);
-            grip.rotation.x = Math.PI / 8;
-            weaponMesh.add(grip);
-
-            weaponMesh.position.set(0.18, -0.22, -0.45);
-            weaponGroup.add(weaponMesh);
-        }
-
-        function buildProceduralSciFiPistol() {
-            upgradeWeaponMesh = new THREE.Group();
-            
-            const slide = new THREE.Mesh(
-                new THREE.BoxGeometry(0.05, 0.08, 0.35),
-                new THREE.MeshStandardMaterial({ color: 0x00f0ff, metalness: 0.9, roughness: 0.1 })
-            );
-            upgradeWeaponMesh.add(slide);
-
-            const body = new THREE.Mesh(
-                new THREE.BoxGeometry(0.04, 0.16, 0.08),
-                new THREE.MeshStandardMaterial({ color: 0x0a0f1a, metalness: 0.5, roughness: 0.4 })
-            );
-            body.position.set(0, -0.09, 0.04);
-            upgradeWeaponMesh.add(body);
-        }
-
-        // --- TARGET SETUP & FALLBACKS ---
+        // --- TARGET SETUP ---
         function setupTargetModel(model) {
             targetMesh = model;
             targetMesh.position.set(0, 1.5, -12);
@@ -1033,9 +1082,9 @@
             scene.add(targetMesh);
         }
 
-        // --- RESPONSIVE CONTROLS & INPUT MAPPING ---
+        // --- INPUT MAPPING ---
         function setupInputHandlers() {
-            // Mouse Aiming (Desktop with Pointer Lock)
+            // Mouse Aiming (Desktop)
             document.addEventListener('mousemove', (e) => {
                 if (document.pointerLockElement === document.body && state.isPlaying) {
                     targetYaw -= e.movementX * 0.002;
@@ -1044,15 +1093,17 @@
                 }
             });
 
-            // Touch Aiming (Mobile)
+            // Touch Aiming (Mobile Support)
             window.addEventListener('touchstart', (e) => {
                 if (!state.isPlaying) return;
+                // Prevent settings interactions from triggering shots
+                if (settingsContainer.contains(e.target)) return;
+
                 isTouchActive = true;
                 const touch = e.touches[0];
                 lastTouchX = touch.clientX;
                 lastTouchY = touch.clientY;
 
-                // Fire weapon upon initial touch
                 fireWeapon();
                 state.mouseIsDown = true;
             }, { passive: false });
@@ -1076,9 +1127,11 @@
                 state.mouseIsDown = false;
             });
 
-            // Firing Trigger (Desktop Mouse)
+            // Mouse Clicks
             window.addEventListener('mousedown', (e) => {
                 if (!state.isPlaying) return;
+                if (settingsContainer.contains(e.target)) return;
+
                 if (e.button === 0) {
                     state.mouseIsDown = true;
                     fireWeapon();
@@ -1114,7 +1167,6 @@
         }
 
         function requestControls() {
-            // Fallback for mobile devices that do not support pointer lock
             if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
                 document.getElementById('pointer-lock-prompt').classList.remove('show');
                 state.controlsLocked = true;
@@ -1124,12 +1176,6 @@
             } else {
                 document.body.requestPointerLock();
             }
-        }
-
-        function selectWeapon(type) {
-            state.currentWeapon = type;
-            wpnSelect.value = type;
-            document.getElementById('hud-weapon-name').innerText = type === 'pistol' ? "Semi-Auto Pistol" : "Rapid Fire Carbine";
         }
 
         function startRound() {
@@ -1185,15 +1231,16 @@
         // --- WEAPON FIRING & RAYCASTING ---
         function fireWeapon() {
             const now = performance.now();
-            const rate = state.currentWeapon === 'rapid' ? state.rapidFireRate : state.fireRate;
+            const config = WEAPON_CONFIGS[state.currentWeaponId];
+            const rate = config ? config.fireRate : 200;
 
             if (now - state.lastFireTime < rate) return;
             state.lastFireTime = now;
 
             state.shotsFired++;
             
-            // Play isolated audio profile
-            sounds.play(state.currentWeapon);
+            // Play Audio profile
+            sounds.play(state.currentAudioProfile);
 
             // Muzzle Flash FX
             muzzleFlash.material.opacity = 1.0;
@@ -1202,13 +1249,8 @@
 
             // Recoil animation
             if (weaponMesh) {
-                weaponMesh.position.z = -0.38;
-                weaponMesh.rotation.x = -0.15;
-            }
-
-            // High Score Verification
-            if (state.score >= 500 && !state.isUpgraded) {
-                triggerWeaponUpgrade();
+                weaponMesh.position.z = config.position.z + 0.05;
+                weaponMesh.rotation.x = -0.08;
             }
 
             // Raycast Hit Detection
@@ -1329,31 +1371,31 @@
             const delta = clock.getDelta();
             const time = clock.getElapsedTime();
 
-            // Handle continuous rapid fire
-            if (state.mouseIsDown && state.currentWeapon === 'rapid' && state.controlsLocked && state.isPlaying) {
+            // Continuous rapid fire handling
+            if (state.mouseIsDown && state.controlsLocked && state.isPlaying) {
                 fireWeapon();
             }
 
-            // Smooth Aiming (Lerping)
+            // Smooth Camera Aiming
             currentYaw = THREE.MathUtils.lerp(currentYaw, targetYaw, 0.15);
             currentPitch = THREE.MathUtils.lerp(currentPitch, targetPitch, 0.15);
             camera.rotation.set(currentPitch, currentYaw, 0, 'YXZ');
 
-            // Weapon Sway & Recoil recovery
+            // Weapon Sway & Recoil Recovery
             if (weaponMesh) {
-                weaponMesh.position.z = THREE.MathUtils.lerp(weaponMesh.position.z, -0.45, 0.15);
-                weaponMesh.rotation.x = THREE.MathUtils.lerp(weaponMesh.rotation.x, 0, 0.15);
+                const config = WEAPON_CONFIGS[state.currentWeaponId];
+                weaponMesh.position.z = THREE.MathUtils.lerp(weaponMesh.position.z, config.position.z, 0.15);
+                weaponMesh.rotation.x = THREE.MathUtils.lerp(weaponMesh.rotation.x, config.rotation.x, 0.15);
                 
-                // Sway offset based on movement speed
                 const swayX = (targetYaw - currentYaw) * 0.3;
                 const swayY = (targetPitch - currentPitch) * 0.3;
 
-                weaponMesh.rotation.y = THREE.MathUtils.lerp(weaponMesh.rotation.y, Math.PI + swayX, 0.1);
-                weaponMesh.rotation.x = THREE.MathUtils.lerp(weaponMesh.rotation.x, swayY, 0.1);
+                weaponMesh.rotation.y = THREE.MathUtils.lerp(weaponMesh.rotation.y, config.rotation.y + swayX, 0.1);
+                weaponMesh.rotation.x = THREE.MathUtils.lerp(weaponMesh.rotation.x, config.rotation.x + swayY, 0.1);
 
                 // Gentle idle sway
-                weaponMesh.position.y = -0.22 + Math.sin(time * 2) * 0.005;
-                weaponMesh.position.x = 0.18 + Math.cos(time * 1.5) * 0.003;
+                weaponMesh.position.y = config.position.y + Math.sin(time * 2) * 0.004;
+                weaponMesh.position.x = config.position.x + Math.cos(time * 1.5) * 0.002;
             }
 
             // Target Movement
@@ -1398,7 +1440,6 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
         }
 
-        // Start render loop
         animate();
     </script>
 </body>
