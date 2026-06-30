@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>V1 - Tactical Shooting Range</title>
+    <title>Tactical Precision Range - V1</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
@@ -18,7 +18,7 @@
             width: 100%;
             height: 100%;
             overflow: hidden;
-            background-color: #05070a;
+            background-color: #0d1117;
             font-family: 'Rajdhani', sans-serif;
             color: #fff;
         }
@@ -31,6 +31,85 @@
             z-index: 1;
         }
 
+        /* Settings Menu (Top-Left) */
+        #settings-menu {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: rgba(10, 15, 26, 0.85);
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            border-radius: 6px;
+            padding: 12px;
+            z-index: 110;
+            backdrop-filter: blur(8px);
+            width: 220px;
+            pointer-events: auto;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+        .settings-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: #00f0ff;
+            margin-bottom: 10px;
+            border-bottom: 1px solid rgba(0, 240, 255, 0.2);
+            padding-bottom: 4px;
+            text-transform: uppercase;
+        }
+        .settings-row {
+            margin-bottom: 10px;
+        }
+        .settings-row:last-child {
+            margin-bottom: 0;
+        }
+        .settings-label {
+            font-size: 0.7rem;
+            color: #7a8fa8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: block;
+            margin-bottom: 4px;
+        }
+        .settings-select {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            color: #fff;
+            padding: 6px;
+            border-radius: 4px;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.85rem;
+            outline: none;
+            cursor: pointer;
+        }
+        .settings-select option {
+            background: #0a0f1a;
+            color: #fff;
+        }
+        .settings-timer-group {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 5px;
+        }
+        .settings-timer-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            color: #7a8fa8;
+            padding: 5px;
+            border-radius: 4px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .settings-timer-btn.active, .settings-timer-btn:hover {
+            background: #00f0ff;
+            color: #05070a;
+            border-color: #00f0ff;
+            box-shadow: 0 0 8px rgba(0, 240, 255, 0.4);
+        }
+
         /* Fullscreen Splash Screen */
         #splash-screen {
             position: absolute;
@@ -38,7 +117,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: url('./b-background.png'), radial-gradient(circle at center, #10141e 0%, #05070a 100%);
+            background-image: url('./b-background.png'), radial-gradient(circle at center, #1a2333 0%, #0d1117 100%);
             background-size: cover;
             background-position: center;
             z-index: 100;
@@ -49,67 +128,31 @@
             transition: opacity 0.8s ease;
         }
         .splash-card {
-            background: rgba(10, 14, 23, 0.85);
+            background: rgba(10, 14, 23, 0.9);
             border: 2px solid #00f0ff;
             box-shadow: 0 0 40px rgba(0, 240, 255, 0.25);
             backdrop-filter: blur(12px);
             padding: 40px;
             border-radius: 12px;
             text-align: center;
-            max-width: 550px;
+            max-width: 500px;
             width: 90%;
         }
         .splash-title {
             font-family: 'Orbitron', sans-serif;
-            font-size: 3rem;
+            font-size: 2.8rem;
             font-weight: 900;
-            letter-spacing: 0.6rem;
+            letter-spacing: 0.5rem;
             color: #00f0ff;
-            text-shadow: 0 0 20px rgba(0, 240, 255, 0.6);
+            text-shadow: 0 0 20px rgba(0, 240, 255, 0.5);
             margin-bottom: 5px;
         }
         .splash-subtitle {
             font-size: 1.1rem;
-            letter-spacing: 0.3rem;
+            letter-spacing: 0.25rem;
             color: #7a8fa8;
             margin-bottom: 30px;
             text-transform: uppercase;
-        }
-
-        /* Setup Options */
-        .setup-section {
-            margin-bottom: 25px;
-            text-align: left;
-        }
-        .setup-label {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 0.9rem;
-            color: #00f0ff;
-            margin-bottom: 10px;
-            letter-spacing: 1px;
-            display: block;
-        }
-        .timer-options {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-        }
-        .timer-btn {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(0, 240, 255, 0.3);
-            color: #fff;
-            padding: 10px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 700;
-            transition: all 0.2s ease;
-        }
-        .timer-btn.active, .timer-btn:hover {
-            background: #00f0ff;
-            color: #05070a;
-            box-shadow: 0 0 15px rgba(0, 240, 255, 0.5);
-            border-color: #00f0ff;
         }
 
         /* Loader & Start Button */
@@ -123,24 +166,18 @@
             color: #fff;
             font-family: 'Orbitron', sans-serif;
             font-weight: 900;
-            font-size: 1.3rem;
-            padding: 15px;
+            font-size: 1.2rem;
+            padding: 14px;
             border-radius: 6px;
             cursor: pointer;
             text-transform: uppercase;
-            letter-spacing: 3px;
+            letter-spacing: 2px;
             transition: all 0.3s ease;
             box-shadow: 0 0 20px rgba(255, 0, 85, 0.4);
         }
         .btn-action:hover {
             transform: scale(1.02);
             box-shadow: 0 0 30px rgba(255, 0, 85, 0.8);
-        }
-        .btn-action:disabled {
-            background: #2a313d;
-            color: #5c697a;
-            box-shadow: none;
-            cursor: not-allowed;
         }
         .loader-bar-container {
             width: 100%;
@@ -177,21 +214,22 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            padding: 25px;
+            padding: 20px;
             box-sizing: border-box;
             opacity: 0;
             transition: opacity 0.5s ease;
         }
         .hud-header {
             display: flex;
-            justify-content: space-between;
+            justify-content: flex-end;
             align-items: flex-start;
             width: 100%;
+            gap: 15px;
         }
         .hud-panel {
             background: rgba(5, 7, 10, 0.85);
             border-left: 4px solid #00f0ff;
-            padding: 12px 20px;
+            padding: 10px 18px;
             border-radius: 0 6px 6px 0;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             backdrop-filter: blur(8px);
@@ -202,20 +240,18 @@
             border-right: 4px solid #ff0055;
             border-radius: 6px 0 0 6px;
             text-align: right;
-            display: flex;
-            gap: 20px;
         }
         .hud-label {
             font-family: 'Orbitron', sans-serif;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: #7a8fa8;
-            letter-spacing: 2px;
+            letter-spacing: 1.5px;
             text-transform: uppercase;
-            margin-bottom: 3px;
+            margin-bottom: 2px;
         }
         .hud-value {
             font-family: 'Orbitron', sans-serif;
-            font-size: 2rem;
+            font-size: 1.8rem;
             font-weight: 900;
             color: #fff;
         }
@@ -228,87 +264,43 @@
             text-shadow: 0 0 15px rgba(255, 0, 85, 0.4);
         }
 
-        /* Weapon Controls Panel */
-        .weapon-panel {
+        /* Bottom HUD elements */
+        .hud-bottom-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            width: 100%;
+        }
+        .weapon-display {
             background: rgba(5, 7, 10, 0.85);
             border: 1px solid rgba(0, 240, 255, 0.2);
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            padding: 10px 15px;
+            border-radius: 6px;
             backdrop-filter: blur(8px);
             pointer-events: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            width: 240px;
+            text-align: left;
         }
-        .selector-title {
+        .weapon-display-title {
             font-family: 'Orbitron', sans-serif;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: #00f0ff;
             letter-spacing: 1px;
             text-transform: uppercase;
-            border-bottom: 1px solid rgba(0, 240, 255, 0.2);
-            padding-bottom: 5px;
         }
-        .weapon-select-btn {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: #a0aab5;
-            padding: 8px 12px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 0.8rem;
-            text-align: left;
-            transition: all 0.2s ease;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .weapon-select-btn.active {
-            background: rgba(0, 240, 255, 0.1);
-            border-color: #00f0ff;
+        .weapon-display-name {
+            font-size: 1.1rem;
+            font-weight: 700;
             color: #fff;
-            box-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
-        }
-        .weapon-select-btn:hover:not(.active) {
-            background: rgba(255, 255, 255, 0.08);
-            color: #fff;
-        }
-        .upgrade-btn {
-            background: linear-gradient(90deg, #00f0ff, #0072ff);
-            border: none;
-            color: #05070a;
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 900;
-            font-size: 0.85rem;
-            padding: 10px;
-            border-radius: 4px;
-            cursor: pointer;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            transition: all 0.2s ease;
-        }
-        .upgrade-btn:hover {
-            box-shadow: 0 0 15px rgba(0, 240, 255, 0.6);
-            transform: translateY(-1px);
-        }
-        .upgrade-btn:disabled {
-            background: #1b222b;
-            color: #4f5a66;
-            cursor: not-allowed;
-            box-shadow: none;
         }
 
-        /* Crosshair: Permanent Red Laser Dot */
+        /* Crosshair: Permanent Red Laser Dot in Center */
         #crosshair {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 6px;
-            height: 6px;
+            width: 8px;
+            height: 8px;
             background-color: #ff0000;
             border-radius: 50%;
             box-shadow: 0 0 8px #ff0000, 0 0 15px #ff0000;
@@ -323,8 +315,8 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%) scale(0.5);
-            width: 50px;
-            height: 50px;
+            width: 45px;
+            height: 45px;
             border: 2px solid #ff0055;
             border-radius: 50%;
             z-index: 4;
@@ -370,7 +362,7 @@
         }
         .game-over-title {
             font-family: 'Orbitron', sans-serif;
-            font-size: 2.5rem;
+            font-size: 2.3rem;
             font-weight: 900;
             color: #ff0055;
             text-shadow: 0 0 20px rgba(255, 0, 85, 0.6);
@@ -397,14 +389,14 @@
             color: #00f0ff;
         }
 
-        /* Pointer Lock Prompt */
+        /* Pointer Lock / Mobile Touch Prompt Overlay */
         #pointer-lock-prompt {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(5, 7, 10, 0.85);
+            background: rgba(5, 7, 10, 0.8);
             backdrop-filter: blur(6px);
             z-index: 90;
             display: flex;
@@ -426,6 +418,7 @@
             border-radius: 8px;
             text-align: center;
             max-width: 400px;
+            width: 90%;
         }
         .prompt-card h3 {
             font-family: 'Orbitron', sans-serif;
@@ -455,9 +448,53 @@
             opacity: 1;
             transform: translateX(-50%) translateY(-15px);
         }
+
+        /* Interactive Upgrade Notification */
+        #upgrade-alert {
+            position: absolute;
+            bottom: 120px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 240, 255, 0.15);
+            border: 1px solid #00f0ff;
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-family: 'Orbitron', sans-serif;
+            color: #fff;
+            text-shadow: 0 0 10px #00f0ff;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 80;
+        }
+        #upgrade-alert.show {
+            opacity: 1;
+        }
     </style>
 </head>
 <body>
+
+    <!-- Settings Menu (Top-Left) -->
+    <div id="settings-menu">
+        <div class="settings-title">Precision Config</div>
+        <div class="settings-row">
+            <span class="settings-label">Weapon / Audio Profile</span>
+            <select id="settings-weapon-select" class="settings-select">
+                <option value="pistol">Pistol (gun-shot-1.mp3)</option>
+                <option value="rapid">Rapid Fire (gun-fire-2.mp3)</option>
+            </select>
+        </div>
+        <div class="settings-row">
+            <span class="settings-label">Mission Time</span>
+            <div class="settings-timer-group">
+                <button class="settings-timer-btn active" data-time="60">1M</button>
+                <button class="settings-timer-btn" data-time="120">2M</button>
+                <button class="settings-timer-btn" data-time="180">3M</button>
+            </div>
+        </div>
+    </div>
 
     <!-- Splash / Setup Screen -->
     <div id="splash-screen">
@@ -465,31 +502,22 @@
             <h1 class="splash-title">TACTICAL V1</h1>
             <p class="splash-subtitle">Daylight Precision Range</p>
             
-            <div class="setup-section">
-                <span class="setup-label">SELECT MISSION DURATION</span>
-                <div class="timer-options">
-                    <button class="timer-btn active" data-time="60">1 MIN</button>
-                    <button class="timer-btn" data-time="120">2 MIN</button>
-                    <button class="timer-btn" data-time="180">3 MIN</button>
-                </div>
-            </div>
-
             <div id="preloader">
                 <button class="btn-action" id="btn-start-load">INITIALIZE SIMULATION</button>
                 <div class="loader-bar-container" id="loader-container">
                     <div class="loader-bar" id="loader-progress"></div>
                 </div>
-                <div class="loader-status" id="loader-text">Awaiting system handshake...</div>
+                <div class="loader-status" id="loader-text">Awaiting systems calibration...</div>
             </div>
         </div>
     </div>
 
-    <!-- Pointer Lock Prompt -->
+    <!-- Pointer Lock & Touch Interaction Prompt -->
     <div id="pointer-lock-prompt">
         <div class="prompt-card">
-            <h3>SIMULATION PAUSED</h3>
-            <p style="color: #7a8fa8; margin-bottom: 20px;">Click anywhere on screen to lock controls and resume training.</p>
-            <button class="btn-action" style="font-size: 1rem; padding: 10px 20px;">RESUME</button>
+            <h3>SIMULATION INACTIVE</h3>
+            <p style="color: #7a8fa8; margin-bottom: 20px;">Click/Tap anywhere on the training field to lock controls and begin.</p>
+            <button class="btn-action" style="font-size: 1rem; padding: 10px 20px;">RESUME TRAINING</button>
         </div>
     </div>
 
@@ -514,24 +542,14 @@
             </div>
         </div>
 
-        <div style="display: flex; justify-content: space-between; align-items: flex-end; width: 100%;">
-            <!-- Left: Weapon Selector & Upgrade Menu -->
-            <div class="weapon-panel">
-                <div class="selector-title">WEAPON SYSTEM</div>
-                <button class="weapon-select-btn active" id="btn-wpn-pistol">
-                    <span>SEMI-AUTO PISTOL</span>
-                    <span style="font-size: 0.7rem; opacity: 0.6;">[1]</span>
-                </button>
-                <button class="weapon-select-btn" id="btn-wpn-rapid">
-                    <span>RAPID FIRE</span>
-                    <span style="font-size: 0.7rem; opacity: 0.6;">[2]</span>
-                </button>
-                <button class="upgrade-btn" id="btn-wpn-upgrade">UPGRADE WEAPON</button>
+        <div class="hud-bottom-row">
+            <div class="weapon-display">
+                <div class="weapon-display-title">Active Armament</div>
+                <div class="weapon-display-name" id="hud-weapon-name">Semi-Auto Pistol</div>
             </div>
 
-            <!-- Right: Info -->
-            <div style="text-align: right; color: #7a8fa8; font-size: 0.9rem; pointer-events: auto; background: rgba(5,7,10,0.8); padding: 10px 15px; border-radius: 6px;">
-                <span style="color: #00f0ff; font-weight: bold;">L-CLICK</span> SHOOT &nbsp;|&nbsp; <span style="color: #00f0ff; font-weight: bold;">ESC</span> FREE MOUSE
+            <div style="text-align: right; color: #7a8fa8; font-size: 0.85rem; pointer-events: auto; background: rgba(5,7,10,0.8); padding: 8px 12px; border-radius: 6px;">
+                <span style="color: #00f0ff; font-weight: bold;">CLICK / TAP</span> SHOOT &nbsp;|&nbsp; <span style="color: #00f0ff; font-weight: bold;">ESC</span> FREE MOUSE
             </div>
         </div>
     </div>
@@ -566,6 +584,7 @@
     <div id="crosshair"></div>
     <div id="hit-indicator"></div>
     <div id="hit-toast">BULLSEYE!</div>
+    <div id="upgrade-alert">HIGH SCORE! SCI-FI WEAPON SYSTEM UNLOCKED</div>
 
     <div id="canvas-container"></div>
 
@@ -574,91 +593,30 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
 
     <script>
-        // --- SOUND CONTROLLER (Isolated, No-Stacking, Synth Fallbacks) ---
+        // --- SOUND CONTROLLER (Strict 'Audio-Stop-Before-Play' enforcement) ---
         class SoundController {
             constructor() {
-                this.ctx = null;
-                this.buffers = {};
-                this.hypeOscillator = null;
-                this.activeSource = null;
-                this.hypeInterval = null;
-                this.isMuted = false;
+                this.audioObjects = {
+                    pistol: new Audio("./gun-shot-1.mp3"),
+                    rapid: new Audio("./gun-fire-2.mp3")
+                };
+                this.activeAudio = null;
             }
 
-            init() {
-                if (this.ctx) return;
-                this.ctx = new (window.AudioContext || window.webkitAudioContext)();
-            }
-
-            async preloadSound(name, url) {
-                this.init();
-                try {
-                    const response = await fetch(url);
-                    const arrayBuffer = await response.arrayBuffer();
-                    const audioBuffer = await this.ctx.decodeAudioBuffer(arrayBuffer);
-                    this.buffers[name] = audioBuffer;
-                } catch (e) {
-                    console.warn(`Failed to load audio: ${url}. Synthesizer fallback will be used.`);
-                }
-            }
-
-            play(name) {
-                this.init();
-                
-                // Sound Isolation: Stop previous sound immediately before starting a new one
-                if (this.activeSource) {
-                    try { this.activeSource.stop(); } catch(e) {}
-                    this.activeSource = null;
+            play(type) {
+                // Strict audio-stop-before-play requirement
+                if (this.activeAudio) {
+                    this.activeAudio.pause();
+                    this.activeAudio.currentTime = 0;
                 }
 
-                if (this.buffers[name]) {
-                    const source = this.ctx.createBufferSource();
-                    source.buffer = this.buffers[name];
-                    source.connect(this.ctx.destination);
-                    source.start(0);
-                    this.activeSource = source;
-                } else {
-                    // Fail-safe synthesized sound
-                    this.playFallbackSynth(name === 'rapid' ? 0.08 : 0.2);
-                }
-            }
-
-            playFallbackSynth(duration = 0.2) {
-                if (!this.ctx) return;
-                const osc = this.ctx.createOscillator();
-                const gain = this.ctx.createGain();
-                
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(280, this.ctx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(10, this.ctx.currentTime + duration);
-                
-                gain.gain.setValueAtTime(0.25, this.ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + duration);
-                
-                osc.connect(gain);
-                gain.connect(this.ctx.destination);
-                
-                osc.start();
-                osc.stop(this.ctx.currentTime + duration);
-                
-                // Track this as current source
-                this.activeSource = osc;
-            }
-
-            startHypeSequence() {
-                this.init();
-                if (this.hypeInterval) return;
-
-                // Loop sequence of gunshots to build anticipation
-                this.hypeInterval = setInterval(() => {
-                    this.playFallbackSynth(0.15);
-                }, 1200);
-            }
-
-            stopHypeSequence() {
-                if (this.hypeInterval) {
-                    clearInterval(this.hypeInterval);
-                    this.hypeInterval = null;
+                const audio = this.audioObjects[type];
+                if (audio) {
+                    this.activeAudio = audio;
+                    audio.currentTime = 0;
+                    audio.play().catch(e => {
+                        console.warn("Audio playback deferred or file not found. Ensure assets exist locally.");
+                    });
                 }
             }
         }
@@ -680,39 +638,50 @@
             lastFireTime: 0,
             fireRate: 350, // ms between shots
             rapidFireRate: 150,
-            mouseIsDown: false,
-            targetMoveTime: 0
+            mouseIsDown: false
         };
 
         // --- THREE.JS ENGINE VARIABLES ---
         let scene, camera, renderer, clock;
         let weaponGroup, weaponMesh, muzzleFlash, muzzleFlashLight;
         let targetMesh = null;
-        let environmentMeshes = [];
         let hitParticles = [];
         let upgradeWeaponMesh = null;
 
-        // --- INITIALIZATION ---
-        const timerBtns = document.querySelectorAll('.timer-btn');
-        timerBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                timerBtns.forEach(b => b.classList.remove('active'));
+        // --- CAMERA LOOK & AIM ROTATIONS (With Lerping) ---
+        let targetPitch = 0;
+        let targetYaw = 0;
+        let currentPitch = 0;
+        let currentYaw = 0;
+
+        // Touch aiming state
+        let isTouchActive = false;
+        let lastTouchX = 0;
+        let lastTouchY = 0;
+
+        // --- SETTINGS UI SYNCING ---
+        const wpnSelect = document.getElementById('settings-weapon-select');
+        wpnSelect.addEventListener('change', (e) => {
+            selectWeapon(e.target.value);
+        });
+
+        const settingsTimerBtns = document.querySelectorAll('.settings-timer-btn');
+        settingsTimerBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                settingsTimerBtns.forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
                 state.duration = parseInt(btn.getAttribute('data-time'), 10);
                 state.timeLeft = state.duration;
+                updateHUD();
             });
         });
 
         const btnStartLoad = document.getElementById('btn-start-load');
         btnStartLoad.addEventListener('click', () => {
-            // Unlock Audio context first
-            sounds.init();
-            sounds.startHypeSequence();
-
             btnStartLoad.style.display = 'none';
             document.getElementById('loader-container').style.display = 'block';
             document.getElementById('loader-text').style.display = 'block';
-
             startPreloading();
         });
 
@@ -722,26 +691,23 @@
             const loaderText = document.getElementById('loader-text');
 
             let loadedCount = 0;
-            const totalAssets = 4; // 2 models + 2 sounds
+            const totalAssets = 2; // Models loaded initially
 
             function updateProgress() {
                 loadedCount++;
                 const pct = Math.round((loadedCount / totalAssets) * 100);
                 loaderProgress.style.width = `${pct}%`;
                 
-                if (loadedCount === 1) loaderText.innerText = "Loading Hand Weaponry...";
-                if (loadedCount === 2) loaderText.innerText = "Setting Up Target Field...";
-                if (loadedCount === 3) loaderText.innerText = "Calibrating Audio Buffers...";
+                if (loadedCount === 1) loaderText.innerText = "Setting Up Target Field...";
                 if (loadedCount === totalAssets) {
-                    loaderText.innerText = "Systems Ready.";
+                    loaderText.innerText = "Systems Calibrated.";
                     setTimeout(() => {
-                        sounds.stopHypeSequence();
                         document.getElementById('splash-screen').style.opacity = 0;
                         setTimeout(() => {
                             document.getElementById('splash-screen').style.display = 'none';
                             document.getElementById('hud').style.opacity = 1;
                             document.getElementById('crosshair').style.display = 'block';
-                            requestPointerLock();
+                            requestControls();
                         }, 800);
                     }, 500);
                 }
@@ -750,11 +716,6 @@
             // Init 3D Engine
             initEngine();
 
-            // Load Audio Assets
-            sounds.preloadSound('pistol', './gun-shot-1.mp3').then(updateProgress);
-            sounds.preloadSound('rapid', './gun-fire-2.mp3').then(updateProgress);
-
-            // GLTF Loader
             const gltfLoader = new THREE.GLTFLoader();
 
             // 1. Preload hand_gun.glb
@@ -786,30 +747,30 @@
             );
         }
 
-        // --- LAZY LOADING WEAPON UPGRADE ---
-        const btnUpgrade = document.getElementById('btn-wpn-upgrade');
-        btnUpgrade.addEventListener('click', (e) => {
-            e.stopPropagation();
+        // --- HIGH SCORE SCI-FI WEAPON SYSTEM UPGRADE ---
+        function triggerWeaponUpgrade() {
             if (state.isUpgraded || state.isUpgrading) return;
-
             state.isUpgrading = true;
-            btnUpgrade.innerText = "DOWNLOADING...";
-            btnUpgrade.disabled = true;
+
+            const alertBox = document.getElementById('upgrade-alert');
+            alertBox.classList.add('show');
 
             const gltfLoader = new THREE.GLTFLoader();
             gltfLoader.load('./sci-fi_pistol.glb',
                 (gltf) => {
                     upgradeWeaponMesh = gltf.scene;
                     applyUpgradeMesh();
+                    setTimeout(() => alertBox.classList.remove('show'), 3000);
                 },
                 undefined,
                 (err) => {
                     console.warn("Could not load sci-fi_pistol.glb, upgrading to procedural futuristic weapon.");
                     buildProceduralSciFiPistol();
                     applyUpgradeMesh();
+                    setTimeout(() => alertBox.classList.remove('show'), 3000);
                 }
             );
-        });
+        }
 
         function applyUpgradeMesh() {
             if (weaponMesh) {
@@ -843,9 +804,8 @@
 
             state.isUpgraded = true;
             state.isUpgrading = false;
-            btnUpgrade.innerText = "UPGRADED";
             
-            // Visual pulse on upgrade
+            document.getElementById('hud-weapon-name').innerText = "V2 Sci-Fi Eliminator";
             triggerHitIndicator(true);
         }
 
@@ -853,9 +813,9 @@
         function initEngine() {
             scene = new THREE.Scene();
             
-            // Bright Daylight Sky and Fog
-            scene.background = new THREE.Color(0xdce8f5);
-            scene.fog = new THREE.FogExp2(0xdce8f5, 0.015);
+            // Enhanced Daylight Mode
+            scene.background = new THREE.Color(0xe0eaf5);
+            scene.fog = new THREE.FogExp2(0xe0eaf5, 0.015);
 
             camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 1000);
             camera.position.set(0, 1.6, 0); // Eye level
@@ -866,25 +826,25 @@
             renderer.shadowMap.enabled = true;
             renderer.shadowMap.type = THREE.PCFSoftShadowMap;
             renderer.toneMapping = THREE.ACESFilmicToneMapping;
-            renderer.toneMappingExposure = 1.2;
+            renderer.toneMappingExposure = 1.3;
             
             document.getElementById('canvas-container').appendChild(renderer.domElement);
             clock = new THREE.Clock();
 
-            // --- DAYLIGHT ENVIRONMENT LIGHTING ---
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+            // --- DAYLIGHT LIGHTING ---
+            const ambientLight = new THREE.AmbientLight(0xffffff, 1.1);
             scene.add(ambientLight);
 
-            const sunLight = new THREE.DirectionalLight(0xfffaed, 1.5);
-            sunLight.position.set(30, 50, 20);
+            const sunLight = new THREE.DirectionalLight(0xfffdf5, 1.8);
+            sunLight.position.set(30, 55, 20);
             sunLight.castShadow = true;
             sunLight.shadow.mapSize.width = 2048;
             sunLight.shadow.mapSize.height = 2048;
             sunLight.shadow.bias = -0.0005;
             scene.add(sunLight);
 
-            const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 0.6);
-            hemiLight.position.set(0, 20, 0);
+            const hemiLight = new THREE.HemisphereLight(0xffffff, 0x555555, 0.7);
+            hemiLight.position.set(0, 30, 0);
             scene.add(hemiLight);
 
             // Weapon Camera Rig Group
@@ -926,8 +886,8 @@
             // Concrete Range Floor
             const floorGeo = new THREE.PlaneGeometry(60, 100);
             const floorMat = new THREE.MeshStandardMaterial({
-                color: 0x8a929e,
-                roughness: 0.6,
+                color: 0x8fa0b0,
+                roughness: 0.5,
                 metalness: 0.1
             });
             const floor = new THREE.Mesh(floorGeo, floorMat);
@@ -935,21 +895,21 @@
             floor.receiveShadow = true;
             scene.add(floor);
 
-            // Floor lines
-            const grid = new THREE.GridHelper(100, 50, 0x556273, 0xccd6e0);
+            // Grid lines
+            const grid = new THREE.GridHelper(100, 50, 0x738599, 0xb0c4de);
             grid.position.y = 0.01;
             scene.add(grid);
 
-            // Side Walls (Daylight Concrete Range Walls)
-            const wallGeo = new THREE.PlaneGeometry(100, 12);
+            // Daylight Concrete Range Walls
+            const wallGeo = new THREE.PlaneGeometry(100, 15);
             const wallMat = new THREE.MeshStandardMaterial({
-                color: 0xa3acb8,
-                roughness: 0.7
+                color: 0xa8b8c8,
+                roughness: 0.6
             });
 
             const leftWall = new THREE.Mesh(wallGeo, wallMat);
             leftWall.rotation.y = Math.PI / 2;
-            leftWall.position.set(-20, 6, -10);
+            leftWall.position.set(-20, 7.5, -10);
             leftWall.receiveShadow = true;
             scene.add(leftWall);
 
@@ -959,9 +919,9 @@
             scene.add(rightWall);
 
             // Back Wall
-            const backWallGeo = new THREE.PlaneGeometry(40, 12);
+            const backWallGeo = new THREE.PlaneGeometry(40, 15);
             const backWall = new THREE.Mesh(backWallGeo, wallMat);
-            backWall.position.set(0, 6, -35);
+            backWall.position.set(0, 7.5, -35);
             backWall.receiveShadow = true;
             scene.add(backWall);
         }
@@ -983,8 +943,8 @@
                     child.castShadow = true;
                     child.receiveShadow = true;
                     if (child.material) {
-                        child.material.metalness = 0.8;
-                        child.material.roughness = 0.2;
+                        child.material.metalness = 0.7;
+                        child.material.roughness = 0.3;
                     }
                 }
             });
@@ -996,13 +956,13 @@
             
             const slide = new THREE.Mesh(
                 new THREE.BoxGeometry(0.05, 0.07, 0.3),
-                new THREE.MeshStandardMaterial({ color: 0x23272a, metalness: 0.8, roughness: 0.2 })
+                new THREE.MeshStandardMaterial({ color: 0x1f2326, metalness: 0.8, roughness: 0.2 })
             );
             weaponMesh.add(slide);
 
             const grip = new THREE.Mesh(
                 new THREE.BoxGeometry(0.045, 0.15, 0.07),
-                new THREE.MeshStandardMaterial({ color: 0x0f1115, metalness: 0.2, roughness: 0.7 })
+                new THREE.MeshStandardMaterial({ color: 0x0a0c0e, metalness: 0.2, roughness: 0.7 })
             );
             grip.position.set(0, -0.09, 0.05);
             grip.rotation.x = Math.PI / 8;
@@ -1023,7 +983,7 @@
 
             const body = new THREE.Mesh(
                 new THREE.BoxGeometry(0.04, 0.16, 0.08),
-                new THREE.MeshStandardMaterial({ color: 0x10141e, metalness: 0.5, roughness: 0.4 })
+                new THREE.MeshStandardMaterial({ color: 0x0a0f1a, metalness: 0.5, roughness: 0.4 })
             );
             body.position.set(0, -0.09, 0.04);
             upgradeWeaponMesh.add(body);
@@ -1032,7 +992,6 @@
         // --- TARGET SETUP & FALLBACKS ---
         function setupTargetModel(model) {
             targetMesh = model;
-            // Position exactly in the center of the field
             targetMesh.position.set(0, 1.5, -12);
             targetMesh.scale.set(1.5, 1.5, 1.5);
             targetMesh.traverse((child) => {
@@ -1051,17 +1010,16 @@
             // Stand
             const stand = new THREE.Mesh(
                 new THREE.BoxGeometry(0.1, 3, 0.1),
-                new THREE.MeshStandardMaterial({ color: 0x222, metalness: 0.8 })
+                new THREE.MeshStandardMaterial({ color: 0x111, metalness: 0.8 })
             );
             stand.position.y = -1.5;
             targetMesh.add(stand);
 
-            // Concentric Target Board
+            // Target Board
             const boardGeo = new THREE.CylinderGeometry(0.8, 0.8, 0.05, 32);
             const boardMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.5 });
             const board = new THREE.Mesh(boardGeo, boardMat);
             board.rotation.x = Math.PI / 2;
-            board.name = "TargetBoard";
             targetMesh.add(board);
 
             // Bullseye Ring
@@ -1075,29 +1033,52 @@
             scene.add(targetMesh);
         }
 
-        // --- GAME MECHANICS & INPUTS ---
+        // --- RESPONSIVE CONTROLS & INPUT MAPPING ---
         function setupInputHandlers() {
-            // Weapon selectors
-            const btnPistol = document.getElementById('btn-wpn-pistol');
-            const btnRapid = document.getElementById('btn-wpn-rapid');
-
-            btnPistol.addEventListener('click', (e) => {
-                e.stopPropagation();
-                selectWeapon('pistol');
-            });
-            btnRapid.addEventListener('click', (e) => {
-                e.stopPropagation();
-                selectWeapon('rapid');
+            // Mouse Aiming (Desktop with Pointer Lock)
+            document.addEventListener('mousemove', (e) => {
+                if (document.pointerLockElement === document.body && state.isPlaying) {
+                    targetYaw -= e.movementX * 0.002;
+                    targetPitch -= e.movementY * 0.002;
+                    targetPitch = Math.max(-Math.PI / 3, Math.min(Math.PI / 3, targetPitch));
+                }
             });
 
-            window.addEventListener('keydown', (e) => {
-                if (e.key === '1') selectWeapon('pistol');
-                if (e.key === '2') selectWeapon('rapid');
+            // Touch Aiming (Mobile)
+            window.addEventListener('touchstart', (e) => {
+                if (!state.isPlaying) return;
+                isTouchActive = true;
+                const touch = e.touches[0];
+                lastTouchX = touch.clientX;
+                lastTouchY = touch.clientY;
+
+                // Fire weapon upon initial touch
+                fireWeapon();
+                state.mouseIsDown = true;
+            }, { passive: false });
+
+            window.addEventListener('touchmove', (e) => {
+                if (!state.isPlaying || !isTouchActive) return;
+                const touch = e.touches[0];
+                const dx = touch.clientX - lastTouchX;
+                const dy = touch.clientY - lastTouchY;
+
+                targetYaw -= dx * 0.004;
+                targetPitch -= dy * 0.004;
+                targetPitch = Math.max(-Math.PI / 3, Math.min(Math.PI / 3, targetPitch));
+
+                lastTouchX = touch.clientX;
+                lastTouchY = touch.clientY;
+            }, { passive: false });
+
+            window.addEventListener('touchend', () => {
+                isTouchActive = false;
+                state.mouseIsDown = false;
             });
 
-            // Handle mouse events for firing
+            // Firing Trigger (Desktop Mouse)
             window.addEventListener('mousedown', (e) => {
-                if (!state.controlsLocked || !state.isPlaying) return;
+                if (!state.isPlaying) return;
                 if (e.button === 0) {
                     state.mouseIsDown = true;
                     fireWeapon();
@@ -1110,10 +1091,10 @@
                 }
             });
 
-            // Pointer Lock Controls
+            // Interaction Lock Prompts
             const prompt = document.getElementById('pointer-lock-prompt');
             prompt.addEventListener('click', () => {
-                requestPointerLock();
+                requestControls();
             });
 
             document.addEventListener('pointerlockchange', () => {
@@ -1130,29 +1111,25 @@
                     state.controlsLocked = false;
                 }
             });
-
-            // Camera looking controls
-            let pitch = 0;
-            let yaw = 0;
-            document.addEventListener('mousemove', (e) => {
-                if (!state.controlsLocked) return;
-
-                yaw -= e.movementX * 0.002;
-                pitch -= e.movementY * 0.002;
-                pitch = Math.max(-Math.PI / 3, Math.min(Math.PI / 3, pitch));
-
-                camera.rotation.set(pitch, yaw, 0, 'YXZ');
-            });
         }
 
-        function requestPointerLock() {
-            document.body.requestPointerLock();
+        function requestControls() {
+            // Fallback for mobile devices that do not support pointer lock
+            if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+                document.getElementById('pointer-lock-prompt').classList.remove('show');
+                state.controlsLocked = true;
+                if (!state.isPlaying) {
+                    startRound();
+                }
+            } else {
+                document.body.requestPointerLock();
+            }
         }
 
         function selectWeapon(type) {
             state.currentWeapon = type;
-            document.getElementById('btn-wpn-pistol').classList.toggle('active', type === 'pistol');
-            document.getElementById('btn-wpn-rapid').classList.toggle('active', type === 'rapid');
+            wpnSelect.value = type;
+            document.getElementById('hud-weapon-name').innerText = type === 'pistol' ? "Semi-Auto Pistol" : "Rapid Fire Carbine";
         }
 
         function startRound() {
@@ -1185,9 +1162,11 @@
         function endRound() {
             state.isPlaying = false;
             clearInterval(timerInterval);
-            document.exitPointerLock();
+            
+            try {
+                document.exitPointerLock();
+            } catch (e) {}
 
-            // Populate game over stats
             document.getElementById('final-score').innerText = state.score;
             document.getElementById('final-fired').innerText = state.shotsFired;
             document.getElementById('final-hits').innerText = state.shotsHit;
@@ -1200,7 +1179,7 @@
 
         document.getElementById('btn-restart').addEventListener('click', () => {
             document.getElementById('game-over-screen').classList.remove('show');
-            requestPointerLock();
+            requestControls();
         });
 
         // --- WEAPON FIRING & RAYCASTING ---
@@ -1213,7 +1192,7 @@
 
             state.shotsFired++;
             
-            // Play isolated audio
+            // Play isolated audio profile
             sounds.play(state.currentWeapon);
 
             // Muzzle Flash FX
@@ -1227,6 +1206,11 @@
                 weaponMesh.rotation.x = -0.15;
             }
 
+            // High Score Verification
+            if (state.score >= 500 && !state.isUpgraded) {
+                triggerWeaponUpgrade();
+            }
+
             // Raycast Hit Detection
             const raycaster = new THREE.Raycaster();
             raycaster.setFromCamera(new THREE.Vector2(0, 0), camera);
@@ -1237,12 +1221,10 @@
                     const hit = intersects[0];
                     state.shotsHit++;
                     
-                    // Score calculation based on distance from center
                     const hitPoint = hit.point.clone();
                     const targetPos = new THREE.Vector3();
                     targetMesh.getWorldPosition(targetPos);
                     
-                    // Simple radial distance on target plane
                     const dist = hitPoint.distanceTo(targetPos);
 
                     let points = 10;
@@ -1352,19 +1334,31 @@
                 fireWeapon();
             }
 
-            // Weapon Recoil recovery & float sway
+            // Smooth Aiming (Lerping)
+            currentYaw = THREE.MathUtils.lerp(currentYaw, targetYaw, 0.15);
+            currentPitch = THREE.MathUtils.lerp(currentPitch, targetPitch, 0.15);
+            camera.rotation.set(currentPitch, currentYaw, 0, 'YXZ');
+
+            // Weapon Sway & Recoil recovery
             if (weaponMesh) {
                 weaponMesh.position.z = THREE.MathUtils.lerp(weaponMesh.position.z, -0.45, 0.15);
                 weaponMesh.rotation.x = THREE.MathUtils.lerp(weaponMesh.rotation.x, 0, 0.15);
                 
+                // Sway offset based on movement speed
+                const swayX = (targetYaw - currentYaw) * 0.3;
+                const swayY = (targetPitch - currentPitch) * 0.3;
+
+                weaponMesh.rotation.y = THREE.MathUtils.lerp(weaponMesh.rotation.y, Math.PI + swayX, 0.1);
+                weaponMesh.rotation.x = THREE.MathUtils.lerp(weaponMesh.rotation.x, swayY, 0.1);
+
                 // Gentle idle sway
                 weaponMesh.position.y = -0.22 + Math.sin(time * 2) * 0.005;
                 weaponMesh.position.x = 0.18 + Math.cos(time * 1.5) * 0.003;
             }
 
-            // Target Movement (Phase 2 architecture ready: targets currently move slowly sideways to demonstrate capabilities)
+            // Target Movement
             if (targetMesh && state.isPlaying) {
-                targetMesh.position.x = Math.sin(time * 0.8) * 3;
+                targetMesh.position.x = Math.sin(time * 0.8) * 3.5;
             }
 
             // Decay muzzle flash
