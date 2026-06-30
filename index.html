@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>P1 - Belgian Pistol Training Range</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            margin: 0;
+            padding: 0;
+        }
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #020205;
+            font-family: 'Rajdhani', sans-serif;
+            color: #fff;
+        }
+        #canvas-container {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+
+        /* Loading Screen */
+        #loading-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, #0a0b10 0%, #020205 100%);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .loader-content {
+            text-align: center;
+        }
+        .loader-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 900;
+            letter-spacing: 0.5rem;
+            color: #00f0ff;
+            text-shadow: 0 0 20px rgba(0, 240, 255, 0.5);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+        .loader-subtitle {
+            font-size: 1.2rem;
+            letter-spacing: 0.2rem;
+            color: #707e94;
+            margin-bottom: 40px;
+            text-transform: uppercase;
+        }
+        .pulse-ring {
+            width: 80px;
+            height: 80px;
+            border: 3px solid rgba(0, 240, 255, 0.1);
+            border-radius: 50%;
+            position: relative;
+            margin: 0 auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .pulse-ring::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 3px solid #00f0ff;
+            border-radius: 50%;
+            animation: pulse 1.8s infinite ease-in-out;
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.4);
+        }
+        .pulse-dot {
+            width: 16px;
+            height: 16px;
+            background-color: #ff0055;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #ff0055;
+        }
+        @keyframes pulse {
+            0% { transform: scale(0.6); opacity: 1; }
+            100% { transform: scale(1.4); opacity: 0; }
+        }
+
+        /* Instructions Overlay */
+        #instructions-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(2, 2, 5, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 90;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: opacity 0.5s ease;
+        }
+        .instruction-box {
+            background: rgba(10, 15, 28, 0.8);
+            border: 1px solid #00f0ff;
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.15);
+            padding: 40px;
+            border-radius: 8px;
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+        }
+        .instruction-box h2 {
+            font-family: 'Orbitron', sans-serif;
+            color: #00f0ff;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+        }
+        .instruction-box p {
+            font-size: 1.1rem;
+            color: #a3b8cc;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+        .btn-start {
+            background: linear-gradient(90deg, #00f0ff, #0072ff);
+            border: none;
+            color: #020205;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            font-size: 1.1rem;
+            padding: 12px 35px;
+            border-radius: 4px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.4);
+        }
+        .btn-start:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px rgba(0, 240, 255, 0.7);
+        }
+
+        /* HUD Overlay */
+        #hud {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10;
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 30px;
+            box-sizing: border-box;
+        }
+        .hud-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            width: 100%;
+        }
+        .hud-panel {
+            background: rgba(10, 12, 22, 0.75);
+            border-left: 4px solid #00f0ff;
+            padding: 15px 25px;
+            border-radius: 0 6px 6px 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            backdrop-filter: blur(4px);
+        }
+        .hud-panel.right {
+            border-left: none;
+            border-right: 4px solid #ff0055;
+            border-radius: 6px 0 0 6px;
+            text-align: right;
+        }
+        .hud-label {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.8rem;
+            color: #707e94;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+        .hud-value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.2rem;
+            font-weight: 900;
+            color: #fff;
+            text-shadow: 0 0 10px rgba(255,255,255,0.2);
+        }
+        .hud-value.cyan {
+            color: #00f0ff;
+            text-shadow: 0 0 15px rgba(0, 240, 255, 0.4);
+        }
+        .hud-value.pink {
+            color: #ff0055;
+            text-shadow: 0 0 15px rgba(255, 0, 85, 0.4);
+        }
+
+        /* Crosshair */
+        #crosshair {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 30px;
+            height: 30px;
+            z-index: 5;
+            pointer-events: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: transform 0.1s ease;
+        }
+        .crosshair-line {
+            position: absolute;
+            background-color: #00f0ff;
+            box-shadow: 0 0 5px rgba(0, 240, 255, 0.8);
+        }
+        .crosshair-h {
+            width: 16px;
+            height: 2px;
+        }
+        .crosshair-v {
+            width: 2px;
+            height: 16px;
+        }
+        .crosshair-dot {
+            width: 4px;
+            height: 4px;
+            background-color: #ff0055;
+            border-radius: 50%;
+            box-shadow: 0 0 6px #ff0055;
+        }
+
+        /* Hit Feedback Flash */
+        #hit-indicator {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.5);
+            width: 60px;
+            height: 60px;
+            border: 2px solid #ff0055;
+            border-radius: 50%;
+            z-index: 4;
+            pointer-events: none;
+            opacity: 0;
+            transition: transform 0.15s ease-out, opacity 0.15s ease-out;
+        }
+        #hit-indicator.active {
+            transform: translate(-50%, -50%) scale(1.2);
+            opacity: 1;
+        }
+
+        /* Controls / Footer Info */
+        .hud-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            width: 100%;
+        }
+        .controls-info {
+            font-size: 0.9rem;
+            color: #707e94;
+            letter-spacing: 1px;
+            background: rgba(10, 12, 22, 0.5);
+            padding: 8px 15px;
+            border-radius: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .controls-info span {
+            color: #00f0ff;
+            font-weight: bold;
+        }
+        .brand-watermark {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            font-size: 1.2rem;
+            letter-spacing: 4px;
+            color: rgba(255, 255, 255, 0.15);
+        }
+
+        /* Toast notification */
+        #hit-toast {
+            position: absolute;
+            top: 25%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 900;
+            letter-spacing: 3px;
+            color: #00f0ff;
+            text-shadow: 0 0 10px rgba(0,240,255,0.6);
+            opacity: 0;
+            pointer-events: none;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.2s ease;
+            z-index: 20;
+        }
+        #hit-toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(-20px);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Loading Screen -->
+    <div id="loading-screen">
+        <div class="loader-content">
+            <h1 class="loader-title">P1</h1>
+            <p class="loader-subtitle">Belgian Pistol Loading...</p>
+            <div class="pulse-ring">
+                <div class="pulse-dot"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Instructions / Click to Lock Pointer Overlay -->
+    <div id="instructions-overlay" style="display: none;">
+        <div class="instruction-box">
+            <h2>TACTICAL TRAINING RANGE</h2>
+            <p>Welcome Operator. Calibrate your aiming systems. Click the button below to lock your mouse controls and enter the simulation.</p>
+            <p style="font-size: 0.9rem; color: #707e94; margin-top: -10px;">[ Move Mouse to Aim | Left Click to Fire ]</p>
+            <button class="btn-start" id="btn-enter">ENTER RANGE</button>
+        </div>
+    </div>
+
+    <!-- Crosshair -->
+    <div id="crosshair">
+        <div class="crosshair-line crosshair-h"></div>
+        <div class="crosshair-line crosshair-v"></div>
+        <div class="crosshair-dot"></div>
+    </div>
+    <div id="hit-indicator"></div>
+
+    <!-- Hit Toast -->
+    <div id="hit-toast">BULLSEYE!</div>
+
+    <!-- HUD -->
+    <div id="hud">
+        <div class="hud-header">
+            <div class="hud-panel">
+                <div class="hud-label">SCORE</div>
+                <div class="hud-value cyan" id="score-val">0000</div>
+            </div>
+            <div class="hud-panel right">
+                <div class="hud-label">ACCURACY</div>
+                <div class="hud-value pink" id="accuracy-val">100%</div>
+            </div>
+        </div>
+        <div class="hud-footer">
+            <div class="controls-info">
+                <span>L-CLICK</span> SHOOT &nbsp;|&nbsp; <span>ESC</span> UNLOCK MOUSE
+            </div>
+            <div class="brand-watermark">P1 // BELGIAN</div>
+        </div>
+    </div>
+
+    <!-- 3D Render Canvas Container -->
+    <div id="canvas-container"></div>
+
+    <!-- Three.js and Dependencies via CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+
+    <script>
+        // --- GAME STATE ---
+        const gameState = {
+            score: 0,
+            shotsFired: 0,
+            shotsHit: 0,
+            isLoaded: false,
+            controlsLocked: false,
+            targetSpeed: 0.015,
+            targetDirection: 1,
+            targetRangeX: 6,
+            lastShotTime: 0,
+            fireRate: 250 // ms between shots
+        };
+
+        // --- AUDIO SYSTEM ---
+        const audioSystem = {
+            listener: null,
+            sounds: [],
+            ctx: null,
+            initialized: false,
+            init() {
+                if (this.initialized) return;
+                this.listener = new THREE.AudioListener();
+                camera.add(this.listener);
+
+                // Setup two positional/global sound objects
+                const sound1 = new THREE.Audio(this.listener);
+                const sound2 = new THREE.Audio(this.listener);
+
+                const audioLoader = new THREE.AudioLoader();
+                
+                // Load assets from local root directory
+                audioLoader.load('./gun-fire-2.mp3', (buffer) => {
+                    sound1.setBuffer(buffer);
+                    sound1.setVolume(0.6);
+                });
+
+                audioLoader.load('./gun-shot-1.mp3', (buffer) => {
+                    sound2.setBuffer(buffer);
+                    sound2.setVolume(0.6);
+                });
+
+                this.sounds.push(sound1, sound2);
+                this.initialized = true;
+            },
+            playRandomShot() {
+                if (!this.initialized) this.init();
+                
+                // Fallback direct WebAudio synth if sound files fail or aren't loaded yet
+                const fallbackSynth = () => {
+                    if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(300, this.ctx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(10, this.ctx.currentTime + 0.15);
+                    gain.gain.setValueAtTime(0.3, this.ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.15);
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start();
+                    osc.stop(this.ctx.currentTime + 0.15);
+                };
+
+                // Play loaded sound file or fallback
+                const loadedSounds = this.sounds.filter(s => s.buffer);
+                if (loadedSounds.length > 0) {
+                    const rndSound = loadedSounds[Math.floor(Math.random() * loadedSounds.length)];
+                    if (rndSound.isPlaying) rndSound.stop();
+                    rndSound.play();
+                } else {
+                    fallbackSynth();
+                }
+            }
+        };
+
+        // --- THREE.JS SETUP ---
+        let scene, camera, renderer, clock;
+        let weaponGroup, weaponMesh, muzzleFlash, muzzleFlashLight;
+        let targetGroup, targetMesh;
+        let hitParticles = [];
+        
+        const container = document.getElementById('canvas-container');
+
+        function initEngine() {
+            scene = new THREE.Scene();
+            scene.fog = new THREE.FogExp2(0x0a0b10, 0.015);
+
+            camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(0, 1.6, 0); // Average eye height in meters
+
+            renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            renderer.toneMapping = THREE.ACESFilmicToneMapping;
+            renderer.toneMappingExposure = 1.0;
+            container.appendChild(renderer.domElement);
+
+            clock = new THREE.Clock();
+
+            // Lighting
+            const ambientLight = new THREE.AmbientLight(0x0c1020, 0.6);
+            scene.add(ambientLight);
+
+            const dirLight = new THREE.DirectionalLight(0x8a9eff, 0.8);
+            dirLight.position.set(10, 20, 10);
+            dirLight.castShadow = true;
+            dirLight.shadow.mapSize.width = 2048;
+            dirLight.shadow.mapSize.height = 2048;
+            dirLight.shadow.bias = -0.001;
+            scene.add(dirLight);
+
+            // Spotlight overhead target area
+            const spotLight = new THREE.SpotLight(0x00f0ff, 3, 30, Math.PI / 4, 0.5, 1);
+            spotLight.position.set(0, 8, -15);
+            spotLight.target.position.set(0, 1.5, -15);
+            scene.add(spotLight);
+            scene.add(spotLight.target);
+
+            // Build Training Range Environment
+            buildProceduralEnvironment();
+
+            // Handle Window Resize
+            window.addEventListener('resize', onWindowResize);
+        }
+
+        // --- PROCEDURAL RANGE ENVIRONMENT ---
+        function buildProceduralEnvironment() {
+            // Floor (Dark metallic grid)
+            const floorGeo = new THREE.PlaneGeometry(50, 100);
+            const floorMat = new THREE.MeshStandardMaterial({
+                color: 0x11131a,
+                roughness: 0.2,
+                metalness: 0.8,
+            });
+            const floor = new THREE.Mesh(floorGeo, floorMat);
+            floor.rotation.x = -Math.PI / 2;
+            floor.receiveShadow = true;
+            scene.add(floor);
+
+            // Floor Grid lines for high-tech aesthetic
+            const gridHelper = new THREE.GridHelper(100, 50, 0x00f0ff, 0x1f2430);
+            gridHelper.position.y = 0.01;
+            scene.add(gridHelper);
+
+            // Ceiling (Dark panels)
+            const ceilingGeo = new THREE.PlaneGeometry(50, 100);
+            const ceilingMat = new THREE.MeshStandardMaterial({
+                color: 0x050608,
+                roughness: 0.8
+            });
+            const ceiling = new THREE.Mesh(ceilingGeo, ceilingMat);
+            ceiling.rotation.x = Math.PI / 2;
+            ceiling.position.y = 10;
+            scene.add(ceiling);
+
+            // Walls (Left & Right)
+            const wallGeo = new THREE.PlaneGeometry(100, 10);
+            const wallMat = new THREE.MeshStandardMaterial({
+                color: 0x0c0e14,
+                roughness: 0.5,
+                metalness: 0.5
+            });
+
+            const leftWall = new THREE.Mesh(wallGeo, wallMat);
+            leftWall.rotation.y = Math.PI / 2;
+            leftWall.position.set(-15, 5, -10);
+            leftWall.receiveShadow = true;
+            scene.add(leftWall);
+
+            const rightWall = leftWall.clone();
+            rightWall.rotation.y = -Math.PI / 2;
+            rightWall.position.x = 15;
+            scene.add(rightWall);
+
+            // Back Wall (Behind target)
+            const backWallGeo = new THREE.PlaneGeometry(30, 10);
+            const backWallMat = new THREE.MeshStandardMaterial({
+                color: 0x08090d,
+                roughness: 0.6
+            });
+            const backWall = new THREE.Mesh(backWallGeo, backWallMat);
+            backWall.position.set(0, 5, -30);
+            backWall.receiveShadow = true;
+            scene.add(backWall);
+
+            // Pillars/Supports along the range (Adds depth and shadows)
+            const pillarGeo = new THREE.BoxGeometry(1, 10, 1);
+            const pillarMat = new THREE.MeshStandardMaterial({ color: 0x151922, metalness: 0.7, roughness: 0.3 });
+            for (let z = -5; z >= -25; z -= 10) {
+                const pLeft = new THREE.Mesh(pillarGeo, pillarMat);
+                pLeft.position.set(-14.5, 5, z);
+                pLeft.castShadow = true;
+                pLeft.receiveShadow = true;
+                scene.add(pLeft);
+
+                const pRight = pLeft.clone();
+                pRight.position.x = 14.5;
+                scene.add(pRight);
+
+                // Overhead glowing neon strip
+                const stripGeo = new THREE.BoxGeometry(30, 0.1, 0.2);
+                const stripMat = new THREE.MeshBasicMaterial({ color: 0x00f0ff });
+                const strip = new THREE.Mesh(stripGeo, stripMat);
+                strip.position.set(0, 9.9, z);
+                scene.add(strip);
+            }
+
+            // Build Target Board
+            buildTarget();
+        }
+
+        // --- TARGET DESIGN (Procedural Canvas Texture) ---
+        function buildTarget() {
+            targetGroup = new THREE.Group();
+            targetGroup.position.set(0, 1.8, -15); // Mounted at eye-level, 15m away
+
+            // Target stand (Physical frame holding target)
+            const standGeo = new THREE.BoxGeometry(0.1, 2, 0.1);
+            const standMat = new THREE.MeshStandardMaterial({ color: 0x2d3545, metalness: 0.8, roughness: 0.2 });
+            const standLeft = new THREE.Mesh(standGeo, standMat);
+            standLeft.position.set(-1.2, -1, 0);
+            standLeft.castShadow = true;
+            targetGroup.add(standLeft);
+
+            const standRight = standLeft.clone();
+            standRight.position.x = 1.2;
+            targetGroup.add(standRight);
+
+            const crossbarGeo = new THREE.BoxGeometry(2.4, 0.1, 0.1);
+            const crossbar = new THREE.Mesh(crossbarGeo, standMat);
+            crossbar.position.set(0, 0, 0);
+            crossbar.castShadow = true;
+            targetGroup.add(crossbar);
+
+            // Create target face with high-res procedural canvas texture
+            const canvas = document.createElement('canvas');
+            canvas.width = 512;
+            canvas.height = 512;
+            const ctx = canvas.getContext('2d');
+
+            // Draw clean concentric circles
+            const centerX = 256;
+            const centerY = 256;
+            
+            // Background / Outermost ring
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, 240, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Black ring
+            ctx.strokeStyle = '#000000';
+            ctx.lineWidth = 15;
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, 200, 0, Math.PI * 2);
+            ctx.stroke();
+
+            // Blue Ring
+            ctx.fillStyle = '#00f0ff';
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, 160, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Red Ring
+            ctx.fillStyle = '#ff0055';
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, 100, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Bullseye Ring (Yellow/Gold)
+            ctx.fillStyle = '#ffcc00';
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, 40, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Center Dot
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, 8, 0, Math.PI * 2);
+            ctx.fill();
+
+            const targetTex = new THREE.CanvasTexture(canvas);
+            const targetFaceGeo = new THREE.CylinderGeometry(1.0, 1.0, 0.05, 32);
+            const targetFaceMat = new THREE.MeshStandardMaterial({
+                map: targetTex,
+                roughness: 0.4,
+                metalness: 0.1
+            });
+            
+            targetMesh = new THREE.Mesh(targetFaceGeo, targetFaceMat);
+            targetMesh.rotation.x = Math.PI / 2; // Face the player
+            targetMesh.position.set(0, 0, 0.05);
+            targetMesh.castShadow = true;
+            targetMesh.name = "TargetFace";
+            
+            targetGroup.add(targetMesh);
+            scene.add(targetGroup);
+        }
+
+        // --- LOAD WEAPON MODEL & INITIALIZE ---
+        function loadAssets() {
+            const loadingManager = new THREE.LoadingManager();
+            
+            loadingManager.onLoad = () => {
+                gameState.isLoaded = true;
+                // Soft fade out loading screen
+                const loaderEl = document.getElementById('loading-screen');
+                loaderEl.style.opacity = 0;
+                setTimeout(() => {
+                    loaderEl.style.display = 'none';
+                    document.getElementById('instructions-overlay').style.display = 'flex';
+                }, 800);
+            };
+
+            const gltfLoader = new THREE.GLTFLoader(loadingManager);
+            
+            // Create Weapon Camera Rig Group
+            weaponGroup = new THREE.Group();
+            camera.add(weaponGroup);
+            scene.add(camera); // Add camera to scene to make weapon group visible
+
+            // Muzzle Flash Setup (Attached to weapon group)
+            const flashGeo = new THREE.BufferGeometry();
+            // Simple cross billboard for muzzle flash
+            const size = 0.25;
+            const vertices = new Float32Array([
+                -size, 0, 0,  size, 0, 0,
+                0, -size, 0,  0, size, 0
+            ]);
+            flashGeo.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
+            const flashMat = new THREE.MeshBasicMaterial({
+                color: 0xffaa44,
+                transparent: true,
+                opacity: 0,
+                blending: THREE.AdditiveBlending,
+                side: THREE.DoubleSide
+            });
+            muzzleFlash = new THREE.LineSegments(flashGeo, flashMat);
+            muzzleFlash.position.set(0.18, -0.15, -0.6); // Will align with gun barrel
+            weaponGroup.add(muzzleFlash);
+
+            muzzleFlashLight = new THREE.PointLight(0xffaa44, 0, 5);
+            muzzleFlashLight.position.copy(muzzleFlash.position);
+            weaponGroup.add(muzzleFlashLight);
+
+            // Load weapon GLTF model
+            gltfLoader.load('./sci-fi_pistol.glb', 
+                (gltf) => {
+                    weaponMesh = gltf.scene;
+                    
+                    // Normalize size and orientation
+                    // Compute bounding box to scale correctly regardless of model export setup
+                    const box = new THREE.Box3().setFromObject(weaponMesh);
+                    const size = box.getSize(new THREE.Vector3());
+                    const maxDim = Math.max(size.x, size.y, size.z);
+                    const scaleFactor = 0.35 / maxDim; // Scale to ~35cm length
+                    weaponMesh.scale.set(scaleFactor, scaleFactor, scaleFactor);
+
+                    // Position in lower right quadrant of screen (First-Person view)
+                    weaponMesh.position.set(0.18, -0.22, -0.45);
+                    // Rotate to face forward (-Z)
+                    weaponMesh.rotation.set(0, Math.PI, 0); 
+
+                    // Enable shadow casting on gun parts
+                    weaponMesh.traverse((child) => {
+                        if (child.isMesh) {
+                            child.castShadow = true;
+                            child.receiveShadow = true;
+                            // Ensure high tech look
+                            child.material.roughness = 0.2;
+                            child.material.metalness = 0.8;
+                        }
+                    });
+
+                    weaponGroup.add(weaponMesh);
+                },
+                undefined,
+                (error) => {
+                    console.warn("Failed to load custom GLB. Generating high-quality procedural backup gun...", error);
+                    createProceduralPistol();
+                }
+            );
+        }
+
+        // --- PROCEDURAL WEAPON BACKUP ---
+        function createProceduralPistol() {
+            weaponMesh = new THREE.Group();
+            
+            // Futuristic receiver/slide
+            const slideGeo = new THREE.BoxGeometry(0.06, 0.08, 0.35);
+            const slideMat = new THREE.MeshStandardMaterial({ color: 0x1e222d, metalness: 0.9, roughness: 0.1 });
+            const slide = new THREE.Mesh(slideGeo, slideMat);
+            slide.position.set(0, 0, 0);
+            weaponMesh.add(slide);
+
+            // Grip
+            const gripGeo = new THREE.BoxGeometry(0.05, 0.18, 0.08);
+            const gripMat = new THREE.MeshStandardMaterial({ color: 0x0f1115, metalness: 0.3, roughness: 0.6 });
+            const grip = new THREE.Mesh(gripGeo, gripMat);
+            grip.position.set(0, -0.11, 0.06);
+            grip.rotation.x = Math.PI / 8;
+            weaponMesh.add(grip);
+
+            // Barrel / Laser pointer
+            const barrelGeo = new THREE.CylinderGeometry(0.015, 0.015, 0.34, 16);
+            const barrelMat = new THREE.MeshStandardMaterial({ color: 0x3a4454, metalness: 0.9, roughness: 0.2 });
+            const barrel = new THREE.Mesh(barrelGeo, barrelMat);
+            barrel.rotation.x = Math.PI / 2;
+            barrel.position.set(0, 0.01, -0.01);
+            weaponMesh.add(barrel);
+
+            // Neon emission stripe
+            const emitterGeo = new THREE.BoxGeometry(0.005, 0.01, 0.2);
+            const emitterMat = new THREE.MeshBasicMaterial({ color: 0x00f0ff });
+            const emitter = new THREE.Mesh(emitterGeo, emitterMat);
+            emitter.position.set(0.031, 0.01, -0.05);
+            weaponMesh.add(emitter);
+
+            // Align weapon group in first-person view
+            weaponMesh.position.set(0.18, -0.22, -0.45);
+            weaponMesh.rotation.set(0, 0, 0); 
+            weaponGroup.add(weaponMesh);
+        }
+
+        // --- CONTROLS & AIM SYSTEM ---
+        let yaw = 0;
+        let pitch = 0;
+        const mouseSensitivity = 0.002;
+
+        function setupPointerLock() {
+            const overlay = document.getElementById('instructions-overlay');
+            const btnEnter = document.getElementById('btn-enter');
+
+            btnEnter.addEventListener('click', () => {
+                document.body.requestPointerLock();
+            });
+
+            document.addEventListener('pointerlockchange', () => {
+                if (document.pointerLockElement === document.body) {
+                    overlay.style.opacity = 0;
+                    setTimeout(() => { overlay.style.display = 'none'; }, 500);
+                    gameState.controlsLocked = true;
+                    audioSystem.init(); // Init audio context safely on user interaction
+                } else {
+                    overlay.style.display = 'flex';
+                    setTimeout(() => { overlay.style.opacity = 1; }, 10);
+                    gameState.controlsLocked = false;
+                }
+            });
+
+            document.addEventListener('mousemove', (e) => {
+                if (!gameState.controlsLocked) return;
+
+                // Update first person camera angles
+                yaw -= e.movementX * mouseSensitivity;
+                pitch -= e.movementY * mouseSensitivity;
+
+                // Clamp pitch to look straight up/down max
+                pitch = Math.max(-Math.PI / 3, Math.min(Math.PI / 3, pitch));
+
+                camera.rotation.set(pitch, yaw, 0, 'YXZ');
+            });
+
+            window.addEventListener('mousedown', (e) => {
+                if (gameState.controlsLocked && e.button === 0) {
+                    shoot();
+                }
+            });
+        }
+
+        // --- SHOOTING & HIT DETECTION ---
+        function shoot() {
+            const now = performance.now();
+            if (now - gameState.lastShotTime < gameState.fireRate) return;
+            gameState.lastShotTime = now;
+
+            gameState.shotsFired++;
+            audioSystem.playRandomShot();
+
+            // 1. Muzzle Flash Visual Impact
+            muzzleFlash.material.opacity = 1.0;
+            muzzleFlash.rotation.z = Math.random() * Math.PI;
+            muzzleFlashLight.intensity = 4.0;
+
+            // 2. Gun Recoil Physics Simulation
+            if (weaponMesh) {
+                weaponMesh.position.z = -0.35; // Push back
+                weaponMesh.position.y = -0.18; // Snap up
+                weaponMesh.rotation.x = -0.25; // Tilt up
+            }
+
+            // 3. Raycast Hit Detection
+            const raycaster = new THREE.Raycaster();
+            // Raycast directly from screen center (0,0)
+            raycaster.setFromCamera(new THREE.Vector2(0, 0), camera);
+            
+            // We only care about intersecting the target face mesh
+            const intersects = raycaster.intersectObject(targetMesh);
+
+            if (intersects.length > 0) {
+                const hit = intersects[0];
+                gameState.shotsHit++;
+
+                // Calculate distance from target local center (hit.point relative to targetGroup position)
+                const localHitPoint = targetGroup.worldToLocal(hit.point.clone());
+                // The target face is at local Z = 0.05, we measure radial distance in X and Y
+                const radialDist = Math.sqrt(localHitPoint.x * localHitPoint.x + localHitPoint.y * localHitPoint.y);
+
+                let points = 0;
+                let hitType = "HIT";
+
+                if (radialDist <= 0.08) {
+                    points = 100;
+                    hitType = "BULLSEYE!";
+                } else if (radialDist <= 0.2) {
+                    points = 50;
+                    hitType = "INNER RING";
+                } else if (radialDist <= 0.4) {
+                    points = 25;
+                    hitType = "MID RING";
+                } else if (radialDist <= 1.0) {
+                    points = 10;
+                    hitType = "OUTER RING";
+                }
+
+                if (points > 0) {
+                    gameState.score += points;
+                    triggerHitFeedback(hit.point, hitType);
+                }
+            } else {
+                // Missed target
+                triggerHitIndicator(false);
+            }
+
+            updateHUD();
+        }
+
+        // --- VISUAL FEEDBACK & FX ---
+        function triggerHitFeedback(worldPoint, typeText) {
+            // Trigger UI Crosshair Flash
+            triggerHitIndicator(true);
+
+            // Spark Particle burst at hit location
+            const particleCount = 12;
+            const geom = new THREE.BufferGeometry();
+            const positions = [];
+            const velocities = [];
+
+            for (let i = 0; i < particleCount; i++) {
+                positions.push(worldPoint.x, worldPoint.y, worldPoint.z);
+                // Scatter in semi-sphere back towards screen
+                velocities.push(
+                    (Math.random() - 0.5) * 4,
+                    (Math.random() - 0.5) * 4,
+                    Math.random() * 4 + 1
+                );
+            }
+
+            geom.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+            const mat = new THREE.PointsMaterial({
+                color: typeText === "BULLSEYE!" ? 0xffcc00 : 0x00f0ff,
+                size: 0.08,
+                transparent: true,
+                opacity: 1.0,
+                blending: THREE.AdditiveBlending
+            });
+
+            const pSystem = new THREE.Points(geom, mat);
+            scene.add(pSystem);
+            hitParticles.push({
+                system: pSystem,
+                velocities: velocities,
+                age: 0,
+                maxAge: 30 // frames
+            });
+
+            // Display floating text toast
+            const toast = document.getElementById('hit-toast');
+            toast.innerText = typeText;
+            toast.style.color = typeText === "BULLSEYE!" ? "#ffcc00" : "#00f0ff";
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 600);
+        }
+
+        function triggerHitIndicator(isHit) {
+            const indicator = document.getElementById('hit-indicator');
+            indicator.style.borderColor = isHit ? "#00f0ff" : "#ff0055";
+            indicator.classList.add('active');
+            setTimeout(() => {
+                indicator.classList.remove('active');
+            }, 120);
+        }
+
+        function updateHUD() {
+            const scoreEl = document.getElementById('score-val');
+            const accuracyEl = document.getElementById('accuracy-val');
+
+            // Pad score to 4 digits
+            scoreEl.innerText = String(gameState.score).padStart(4, '0');
+
+            // Calculate accuracy percentage
+            if (gameState.shotsFired > 0) {
+                const acc = Math.round((gameState.shotsHit / gameState.shotsFired) * 100);
+                accuracyEl.innerText = `${acc}%`;
+            } else {
+                accuracyEl.innerText = "100%";
+            }
+        }
+
+        // --- GAME LOOP & ANIMATION ---
+        function animate() {
+            requestAnimationFrame(animate);
+
+            const delta = clock.getDelta();
+
+            // 1. Move target dynamically back and forth
+            if (targetGroup) {
+                targetGroup.position.x += gameState.targetSpeed * gameState.targetDirection;
+                if (Math.abs(targetGroup.position.x) > gameState.targetRangeX) {
+                    gameState.targetDirection *= -1;
+                }
+            }
+
+            // 2. Weapon Recoil Recovery
+            if (weaponMesh) {
+                // Smoothly slide back to normal position
+                weaponMesh.position.z = THREE.MathUtils.lerp(weaponMesh.position.z, -0.45, 0.15);
+                weaponMesh.position.y = THREE.MathUtils.lerp(weaponMesh.position.y, -0.22, 0.15);
+                weaponMesh.rotation.x = THREE.MathUtils.lerp(weaponMesh.rotation.x, 0, 0.15);
+            }
+
+            // 3. Decay Muzzle Flash instantly
+            if (muzzleFlash && muzzleFlash.material.opacity > 0) {
+                muzzleFlash.material.opacity -= delta * 15;
+                muzzleFlashLight.intensity -= delta * 60;
+            }
+
+            // 4. Update Hit Particles physics
+            for (let i = hitParticles.length - 1; i >= 0; i--) {
+                const p = hitParticles[i];
+                const posArr = p.system.geometry.attributes.position.array;
+
+                for (let j = 0; j < posArr.length; j += 3) {
+                    posArr[j] += p.velocities[j] * delta;     // X
+                    posArr[j + 1] += p.velocities[j + 1] * delta; // Y
+                    posArr[j + 2] += p.velocities[j + 2] * delta; // Z
+                }
+                p.system.geometry.attributes.position.needsUpdate = true;
+                p.system.material.opacity -= 1.0 / p.maxAge;
+                p.age++;
+
+                if (p.age >= p.maxAge) {
+                    scene.remove(p.system);
+                    p.system.geometry.dispose();
+                    p.system.material.dispose();
+                    hitParticles.splice(i, 1);
+                }
+            }
+
+            renderer.render(scene, camera);
+        }
+
+        // --- WINDOW RESIZE ---
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        // --- INITIALIZATION ENTRY POINT ---
+        window.addEventListener('DOMContentLoaded', () => {
+            initEngine();
+            loadAssets();
+            setupPointerLock();
+            animate();
+        });
+    </script>
+</body>
+</html>
