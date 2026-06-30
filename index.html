@@ -657,8 +657,8 @@
         class SoundController {
             constructor() {
                 this.audioObjects = {
-                    pistol: new Audio("./gun-shot-1.mp3"),
-                    rapid: new Audio("./gun-fire-2.mp3")
+                    pistol: new Audio("gun-shot-1.mp3"),
+                    rapid: new Audio("gun-fire-2.mp3")
                 };
                 this.activeAudio = null;
             }
@@ -796,7 +796,7 @@
             });
 
             // Load Target Field
-            gltfLoader.load('./shooting_range_target.glb', 
+            gltfLoader.load('shooting_range_target.glb', 
                 (gltf) => {
                     setupTargetModel(gltf.scene);
                     updateProgress();
@@ -833,7 +833,7 @@
                 weaponMesh = null;
             }
 
-            gltfLoader.load(`./${filename}`,
+            gltfLoader.load(filename,
                 (gltf) => {
                     setupWeaponMesh(gltf.scene, filename);
                     if (callback) callback();
@@ -925,9 +925,17 @@
         function initEngine() {
             scene = new THREE.Scene();
             
-            // Daylight Mode
+            // Daylight Mode Background & Fog
             scene.background = new THREE.Color(0xe0eaf5);
             scene.fog = new THREE.FogExp2(0xe0eaf5, 0.015);
+
+            // Load Background Texture
+            const textureLoader = new THREE.TextureLoader();
+            textureLoader.load('b-background.png', (texture) => {
+                scene.background = texture;
+            }, undefined, (err) => {
+                console.warn("Could not load b-background.png, using fallback solid color.");
+            });
 
             camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 1000);
             camera.position.set(0, 1.6, 0); // Eye level
