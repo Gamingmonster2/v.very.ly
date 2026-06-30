@@ -164,7 +164,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle at center, rgba(26, 35, 51, 0.85) 0%, rgba(13, 17, 23, 0.98) 100%), url('./b-background.png');
+            background: radial-gradient(circle at center, rgba(13, 20, 33, 0.9) 0%, rgba(5, 7, 10, 0.98) 100%);
             background-size: cover;
             background-position: center;
             z-index: 100;
@@ -639,8 +639,8 @@
             "sm_gun.glb": {
                 name: "SMG Tactical",
                 audio: "rapid",
-                position: { x: 0.12, y: -0.16, z: -0.35 },
-                rotationOffset: { x: 0, y: Math.PI, z: 0 }, // Face forward
+                position: { x: 0.12, y: -0.14, z: -0.32 },
+                rotationOffset: { x: 0, y: 0, z: 0 }, // Removed Math.PI rotation to align with camera forward
                 scale: 0.18,
                 fireRate: 120,
                 color: 0x00f0ff
@@ -648,18 +648,18 @@
             "hand_gun.glb": {
                 name: "Tactical Pistol",
                 audio: "pistol",
-                position: { x: 0.12, y: -0.16, z: -0.35 },
-                rotationOffset: { x: 0, y: Math.PI, z: 0 }, // Face forward
-                scale: 0.18,
+                position: { x: 0.12, y: -0.14, z: -0.32 },
+                rotationOffset: { x: 0, y: 0, z: 0 },
+                scale: 0.15,
                 fireRate: 250,
                 color: 0xffaa00
             },
             "sci-fi_pistol.glb": {
                 name: "Sci-Fi Laser Pistol",
                 audio: "rapid",
-                position: { x: 0.12, y: -0.16, z: -0.35 },
-                rotationOffset: { x: 0, y: Math.PI, z: 0 }, // Face forward
-                scale: 0.18,
+                position: { x: 0.12, y: -0.14, z: -0.32 },
+                rotationOffset: { x: 0, y: 0, z: 0 },
+                scale: 0.16,
                 fireRate: 180,
                 color: 0xff0055
             }
@@ -901,33 +901,23 @@
         }
 
         function setupWeaponMesh(model, filename) {
-            weaponMesh = model;
-            applyWeaponTransform();
-            weaponGroup.add(weaponMesh);
-        }
+            weaponMesh = new THREE.Group();
 
-        function applyWeaponTransform() {
-            if (!weaponMesh) return;
-            const config = WEAPON_CONFIGS[state.currentWeaponId];
-
-            // Normalize size and center geometry to prevent weapon from being cut off or sideways
-            const box = new THREE.Box3().setFromObject(weaponMesh);
+            // Center the loaded model inside the pivot
+            const box = new THREE.Box3().setFromObject(model);
             const size = box.getSize(new THREE.Vector3());
-            const maxDim = Math.max(size.x, size.y, size.z);
-            
-            // Apply scale factor based on the normalized size
+            const maxDim = Math.max(size.x, size.y, size.z) || 1;
+
+            const center = new THREE.Vector3();
+            box.getCenter(center);
+            model.position.sub(center);
+            weaponMesh.add(model);
+
+            const config = WEAPON_CONFIGS[filename];
             const scaleFactor = (config.scale / maxDim) * 1.5;
             weaponMesh.scale.set(scaleFactor, scaleFactor, scaleFactor);
-            
-            // Align weapon to camera workspace
-            weaponMesh.position.set(config.position.x, config.position.y, config.position.z);
-            
-            // Apply alignment rotations
-            weaponMesh.rotation.set(
-                config.rotationOffset.x,
-                config.rotationOffset.y + state.customRotationY,
-                config.rotationOffset.z
-            );
+
+            applyWeaponTransform();
 
             weaponMesh.traverse((child) => {
                 if (child.isMesh) {
@@ -939,54 +929,84 @@
                     }
                 }
             });
+
+            weaponGroup.add(weaponMesh);
+        }
+
+        function applyWeaponTransform() {
+            if (!weaponMesh) return;
+            const config = WEAPON_CONFIGS[state.currentWeaponId];
+
+            weaponMesh.position.set(config.position.x, config.position.y, config.position.z);
+            weaponMesh.rotation.set(
+                config.rotationOffset.x,
+                config.rotationOffset.y + state.customRotationY,
+                config.rotationOffset.z
+            );
         }
 
         function buildProceduralWeapon(filename) {
             weaponMesh = new THREE.Group();
+            const pivotInner = new THREE.Group();
             const config = WEAPON_CONFIGS[filename];
 
             const slideMat = new THREE.MeshStandardMaterial({ 
                 color: config.color, 
-                metalness: 0.9, 
-                roughness: 0.15 
+                metalness: 0.8, 
+                roughness: 0.2 
             });
             const gripMat = new THREE.MeshStandardMaterial({ 
-                color: 0x0a0c0e, 
-                metalness: 0.2, 
-                roughness: 0.7 
+                color: 0x11151c, 
+                metalness: 0.3, 
+                roughness: 0.6 
             });
 
             if (filename === "sm_gun.glb") {
-                // Procedural SMG
-                const barrel = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.015, 0.35, 16), slideMat);
+                // Procedural SMG facing down negative Z
+                const barrel = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.015, 0.3, 16), slideMat);
                 barrel.rotation.x = Math.PI / 2;
-                barrel.position.set(0, 0, -0.1);
-                weaponMesh.add(barrel);
+                barrel.position.set(0, 0, -0.15);
+                pivotInner.add(barrel);
 
-                const body = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.07, 0.25), slideMat);
-                body.position.set(0, -0.02, 0);
-                weaponMesh.add(body);
+                const body = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.06, 0.22), slideMat);
+                body.position.set(0, -0.01, -0.05);
+                pivotInner.add(body);
 
-                const grip = new THREE.Mesh(new THREE.BoxGeometry(0.035, 0.15, 0.05), gripMat);
-                grip.position.set(0, -0.1, 0.05);
+                const grip = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.12, 0.04), gripMat);
+                grip.position.set(0, -0.08, 0.02);
                 grip.rotation.x = Math.PI / 10;
-                weaponMesh.add(grip);
+                pivotInner.add(grip);
 
-                const mag = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.18, 0.04), gripMat);
-                mag.position.set(0, -0.12, -0.05);
-                weaponMesh.add(mag);
+                const mag = new THREE.Mesh(new THREE.BoxGeometry(0.025, 0.14, 0.035), gripMat);
+                mag.position.set(0, -0.1, -0.08);
+                pivotInner.add(mag);
             } else {
-                // Procedural Pistol / Sci-Fi Pistol
-                const slide = new THREE.Mesh(new THREE.BoxGeometry(0.035, 0.05, 0.22), slideMat);
+                // Procedural Pistol / Sci-Fi Pistol facing down negative Z
+                const slide = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.04, 0.18), slideMat);
                 slide.position.set(0, 0, -0.05);
-                weaponMesh.add(slide);
+                pivotInner.add(slide);
 
-                const grip = new THREE.Mesh(new THREE.BoxGeometry(0.032, 0.12, 0.05), gripMat);
-                grip.position.set(0, -0.08, 0.03);
+                const grip = new THREE.Mesh(new THREE.BoxGeometry(0.028, 0.1, 0.04), gripMat);
+                grip.position.set(0, -0.06, 0.02);
                 grip.rotation.x = Math.PI / 8;
-                weaponMesh.add(grip);
+                pivotInner.add(grip);
             }
 
+            // Center pivotInner
+            const box = new THREE.Box3().setFromObject(pivotInner);
+            const size = box.getSize(new THREE.Vector3());
+            const maxDim = Math.max(size.x, size.y, size.z) || 1;
+
+            const center = new THREE.Vector3();
+            box.getCenter(center);
+            pivotInner.position.sub(center);
+
+            weaponMesh.add(pivotInner);
+
+            // Scale and position
+            const scaleFactor = (config.scale / maxDim) * 1.5;
+            weaponMesh.scale.set(scaleFactor, scaleFactor, scaleFactor);
+            
             applyWeaponTransform();
             weaponGroup.add(weaponMesh);
         }
@@ -994,9 +1014,10 @@
         // --- THREE.JS ENGINE SETUP ---
         function initEngine() {
             scene = new THREE.Scene();
-            scene.fog = new THREE.FogExp2(0x111622, 0.01);
+            scene.fog = new THREE.FogExp2(0x05070a, 0.015);
 
-            camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 1000);
+            // Using smaller near clipping plane (0.01) to prevent weapon clipping
+            camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 1000);
             camera.position.set(0, 1.6, 0); // Eye level
 
             renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
@@ -1011,18 +1032,18 @@
             clock = new THREE.Clock();
 
             // Lighting Setup
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
             scene.add(ambientLight);
 
-            const sunLight = new THREE.DirectionalLight(0xfffdf5, 1.5);
-            sunLight.position.set(30, 55, 20);
+            const sunLight = new THREE.DirectionalLight(0xffffff, 1.2);
+            sunLight.position.set(5, 10, 7);
             sunLight.castShadow = true;
-            sunLight.shadow.mapSize.width = 2048;
-            sunLight.shadow.mapSize.height = 2048;
+            sunLight.shadow.mapSize.width = 1024;
+            sunLight.shadow.mapSize.height = 1024;
             sunLight.shadow.bias = -0.0005;
             scene.add(sunLight);
 
-            const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 0.5);
+            const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 0.4);
             hemiLight.position.set(0, 30, 0);
             scene.add(hemiLight);
 
@@ -1066,7 +1087,6 @@
             texture.wrapT = THREE.ClampToEdgeWrapping;
             
             const skyGeo = new THREE.SphereGeometry(300, 32, 15);
-            // Invert the sphere to point inwards
             skyGeo.scale(-1, 1, 1);
             
             const skyMat = new THREE.MeshBasicMaterial({
@@ -1079,16 +1099,16 @@
         }
 
         function buildProceduralBackdrop() {
-            scene.background = new THREE.Color(0x0d121d);
+            scene.background = new THREE.Color(0x05070a);
         }
 
         function buildEnvironment() {
             // Range Floor
             const floorGeo = new THREE.PlaneGeometry(80, 120);
             const floorMat = new THREE.MeshStandardMaterial({
-                color: 0x1f2733,
-                roughness: 0.6,
-                metalness: 0.2
+                color: 0x121720,
+                roughness: 0.7,
+                metalness: 0.1
             });
             const floor = new THREE.Mesh(floorGeo, floorMat);
             floor.rotation.x = -Math.PI / 2;
@@ -1096,14 +1116,14 @@
             scene.add(floor);
 
             // Grid lines
-            const grid = new THREE.GridHelper(120, 60, 0x00f0ff, 0x1a2433);
+            const grid = new THREE.GridHelper(120, 60, 0x00f0ff, 0x121a24);
             grid.position.y = 0.01;
             scene.add(grid);
 
-            // Left & Right boundary barricedes
+            // Left & Right boundary barricades
             const wallGeo = new THREE.PlaneGeometry(120, 10);
             const wallMat = new THREE.MeshStandardMaterial({
-                color: 0x101520,
+                color: 0x0a0f18,
                 roughness: 0.8
             });
 
@@ -1329,8 +1349,8 @@
 
             // Recoil animation
             if (weaponMesh) {
-                weaponMesh.position.z = config.position.z + 0.06;
-                weaponMesh.rotation.x = -0.12;
+                weaponMesh.position.z = config.position.z + 0.05;
+                weaponMesh.rotation.x = -0.1;
             }
 
             // Raycast Hit Detection
