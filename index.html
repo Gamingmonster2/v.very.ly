@@ -179,11 +179,13 @@
             border: 2px solid #00f0ff;
             box-shadow: 0 0 40px rgba(0, 240, 255, 0.25);
             backdrop-filter: blur(12px);
-            padding: 40px;
+            padding: 30px;
             border-radius: 12px;
             text-align: center;
-            max-width: 500px;
+            max-width: 550px;
             width: 90%;
+            max-height: 95vh;
+            overflow-y: auto;
         }
         .splash-title {
             font-family: 'Orbitron', sans-serif;
@@ -198,13 +200,50 @@
             font-size: 1.1rem;
             letter-spacing: 0.25rem;
             color: #7a8fa8;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             text-transform: uppercase;
+        }
+
+        /* Tutorial Display */
+        .tutorial-panel {
+            background: rgba(255, 255, 255, 0.03);
+            border-left: 3px solid #ff0055;
+            border-right: 3px solid #00f0ff;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 25px;
+            text-align: left;
+            font-family: 'Rajdhani', sans-serif;
+        }
+        .tutorial-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #00f0ff;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            display: flex;
+            justify-content: space-between;
+        }
+        .tutorial-text {
+            font-size: 0.9rem;
+            line-height: 1.4;
+            color: #e2e8f0;
+            margin-bottom: 8px;
+        }
+        .tutorial-text.ar {
+            direction: rtl;
+            text-align: right;
+            color: #a0aec0;
+            border-top: 1px solid rgba(255,255,255,0.08);
+            padding-top: 8px;
+            margin-top: 8px;
         }
 
         /* Loader & Start Button */
         #preloader {
-            margin-top: 20px;
+            margin-top: 10px;
         }
         .btn-action {
             width: 100%;
@@ -269,7 +308,7 @@
         .hud-header {
             display: flex;
             justify-content: flex-end;
-            align-items: flex-start;
+            align-items: center;
             width: 100%;
             gap: 15px;
         }
@@ -309,6 +348,29 @@
         .hud-value.pink {
             color: #ff0055;
             text-shadow: 0 0 15px rgba(255, 0, 85, 0.4);
+        }
+
+        /* HUD Pause Button */
+        .hud-pause-btn {
+            background: rgba(255, 0, 85, 0.2);
+            border: 1px solid #ff0055;
+            color: #ff0055;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            font-size: 0.9rem;
+            padding: 12px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.2s ease;
+            pointer-events: auto;
+            box-shadow: 0 0 10px rgba(255, 0, 85, 0.2);
+        }
+        .hud-pause-btn:hover {
+            background: #ff0055;
+            color: #fff;
+            box-shadow: 0 0 15px rgba(255, 0, 85, 0.6);
         }
 
         /* Bottom HUD elements */
@@ -436,6 +498,46 @@
             color: #00f0ff;
         }
 
+        /* Pause / Resume Overlay Screen */
+        #pause-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(5, 7, 10, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 92;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
+        }
+        #pause-overlay.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .pause-card {
+            background: rgba(10, 14, 23, 0.95);
+            border: 2px solid #00f0ff;
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.3);
+            padding: 40px;
+            border-radius: 10px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+        .pause-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            color: #00f0ff;
+            margin-bottom: 25px;
+            letter-spacing: 2px;
+            text-shadow: 0 0 15px rgba(0, 240, 255, 0.4);
+        }
+
         /* Pointer Lock / Mobile Touch Prompt Overlay */
         #pointer-lock-prompt {
             position: absolute;
@@ -517,8 +619,17 @@
             <div class="settings-row">
                 <span class="settings-label">Audio Profile</span>
                 <select id="settings-audio-select" class="settings-select">
-                    <option value="rapid">Rapid Fire (gun-fire-2.mp3)</option>
+                    <option value="rapid" selected>Rapid Fire (gun-fire-2.mp3)</option>
                     <option value="pistol">Pistol Shot (gun-shot-1.mp3)</option>
+                </select>
+            </div>
+
+            <div class="settings-row">
+                <span class="settings-label">Environment Theme</span>
+                <select id="settings-bg-select" class="settings-select">
+                    <option value="image">Default Image</option>
+                    <option value="black">Solid Black</option>
+                    <option value="white">Solid White</option>
                 </select>
             </div>
 
@@ -544,6 +655,24 @@
             <h1 class="splash-title">TACTICAL V2</h1>
             <p class="splash-subtitle">Weapon Management Range</p>
             
+            <!-- Tutorial Display in EN and AR -->
+            <div class="tutorial-panel">
+                <div class="tutorial-title">
+                    <span>How to Play</span>
+                    <span>كيفية اللعب</span>
+                </div>
+                <div class="tutorial-text">
+                    💻 <strong>Desktop:</strong> Move mouse to aim. Click/Hold to fire. Press <strong>ESC</strong> to release cursor.
+                    <br>
+                    📱 <strong>Mobile:</strong> Drag anywhere on screen to aim. Tap/Hold to fire.
+                </div>
+                <div class="tutorial-text ar">
+                    💻 <strong>الكمبيوتر:</strong> حرك الماوس للتصويب. انقر مع الاستمرار لإطلاق النار. اضغط على <strong>ESC</strong> لتحرير المؤشر.
+                    <br>
+                    📱 <strong>الهاتف:</strong> اسحب في أي مكان على الشاشة للتصويب. اضغط مع الاستمرار لإطلاق النار.
+                </div>
+            </div>
+
             <div id="preloader">
                 <button class="btn-action" id="btn-start-load">INITIALIZE SIMULATION</button>
                 <div class="loader-bar-container" id="loader-container">
@@ -560,6 +689,14 @@
             <h3>SIMULATION INACTIVE</h3>
             <p style="color: #7a8fa8; margin-bottom: 20px;">Click/Tap anywhere on the training field to lock controls and begin.</p>
             <button class="btn-action" style="font-size: 1rem; padding: 10px 20px;">RESUME TRAINING</button>
+        </div>
+    </div>
+
+    <!-- Pause Overlay Screen -->
+    <div id="pause-overlay">
+        <div class="pause-card">
+            <h2 class="pause-title">SIMULATION PAUSED</h2>
+            <button class="btn-action" id="btn-resume-overlay">RESUME SIMULATION</button>
         </div>
     </div>
 
@@ -582,6 +719,9 @@
                     <div class="hud-value pink" id="accuracy-val">100%</div>
                 </div>
             </div>
+
+            <!-- Front Panel Pause Button -->
+            <button class="hud-pause-btn" id="btn-pause">PAUSE</button>
         </div>
 
         <div class="hud-bottom-row">
@@ -635,12 +775,13 @@
 
     <script>
         // --- WEAPON CONFIGURATIONS (Sway, alignment and scaling profiles) ---
+        // Note: Added Math.PI rotation on Y to correctly point weapons away from camera (towards targets)
         const WEAPON_CONFIGS = {
             "sm_gun.glb": {
                 name: "SMG Tactical",
                 audio: "rapid",
                 position: { x: 0.12, y: -0.14, z: -0.32 },
-                rotationOffset: { x: 0, y: 0, z: 0 }, // Removed Math.PI rotation to align with camera forward
+                rotationOffset: { x: 0, y: Math.PI, z: 0 },
                 scale: 0.18,
                 fireRate: 120,
                 color: 0x00f0ff
@@ -649,7 +790,7 @@
                 name: "Tactical Pistol",
                 audio: "pistol",
                 position: { x: 0.12, y: -0.14, z: -0.32 },
-                rotationOffset: { x: 0, y: 0, z: 0 },
+                rotationOffset: { x: 0, y: Math.PI, z: 0 },
                 scale: 0.15,
                 fireRate: 250,
                 color: 0xffaa00
@@ -658,7 +799,7 @@
                 name: "Sci-Fi Laser Pistol",
                 audio: "rapid",
                 position: { x: 0.12, y: -0.14, z: -0.32 },
-                rotationOffset: { x: 0, y: 0, z: 0 },
+                rotationOffset: { x: 0, y: Math.PI, z: 0 },
                 scale: 0.16,
                 fireRate: 180,
                 color: 0xff0055
@@ -672,7 +813,6 @@
                     pistol: new Audio("./gun-shot-1.mp3"),
                     rapid: new Audio("./gun-fire-2.mp3")
                 };
-                this.activeAudio = null;
             }
 
             play(type) {
@@ -698,9 +838,10 @@
             duration: 60,
             timeLeft: 60,
             isPlaying: false,
+            isPaused: false,
             controlsLocked: false,
             currentWeaponId: "sm_gun.glb",
-            currentAudioProfile: "rapid",
+            currentAudioProfile: "rapid", // Defaulting to the second file profile (rapid)
             lastFireTime: 0,
             mouseIsDown: false,
             customRotationY: 0
@@ -748,6 +889,11 @@
             state.currentAudioProfile = e.target.value;
         });
 
+        const bgSelect = document.getElementById('settings-bg-select');
+        bgSelect.addEventListener('change', (e) => {
+            changeBackground(e.target.value);
+        });
+
         const rotSlider = document.getElementById('settings-rot-slider');
         const valRot = document.getElementById('val-rot');
         rotSlider.addEventListener('input', (e) => {
@@ -770,6 +916,41 @@
                 updateHUD();
             });
         });
+
+        // --- PAUSE & RESUME LOGIC ---
+        const btnPause = document.getElementById('btn-pause');
+        const btnResumeOverlay = document.getElementById('btn-resume-overlay');
+        const pauseOverlay = document.getElementById('pause-overlay');
+
+        function togglePause() {
+            if (!state.isPlaying) return;
+            state.isPaused = !state.isPaused;
+            if (state.isPaused) {
+                btnPause.innerText = "RESUME";
+                pauseOverlay.classList.add('show');
+                state.mouseIsDown = false;
+                if (document.pointerLockElement === document.body) {
+                    document.exitPointerLock();
+                }
+            } else {
+                btnPause.innerText = "PAUSE";
+                pauseOverlay.classList.remove('show');
+                requestControls();
+            }
+        }
+
+        btnPause.addEventListener('click', (e) => {
+            e.stopPropagation();
+            togglePause();
+        });
+
+        btnResumeOverlay.addEventListener('click', (e) => {
+            e.stopPropagation();
+            togglePause();
+        });
+
+        // Prevent pointer lock prompt from popping up while paused
+        const promptContainer = document.getElementById('pointer-lock-prompt');
 
         const btnStartLoad = document.getElementById('btn-start-load');
         btnStartLoad.addEventListener('click', () => {
@@ -961,34 +1142,34 @@
                 roughness: 0.6 
             });
 
+            // Note: Procedural models are constructed facing POSITIVE Z,
+            // so when rotationOffset.y (Math.PI / 180 deg) is applied, they turn to face NEGATIVE Z (forward towards targets)
             if (filename === "sm_gun.glb") {
-                // Procedural SMG facing down negative Z
                 const barrel = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.015, 0.3, 16), slideMat);
                 barrel.rotation.x = Math.PI / 2;
-                barrel.position.set(0, 0, -0.15);
+                barrel.position.set(0, 0, 0.15);
                 pivotInner.add(barrel);
 
                 const body = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.06, 0.22), slideMat);
-                body.position.set(0, -0.01, -0.05);
+                body.position.set(0, -0.01, 0.05);
                 pivotInner.add(body);
 
                 const grip = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.12, 0.04), gripMat);
-                grip.position.set(0, -0.08, 0.02);
-                grip.rotation.x = Math.PI / 10;
+                grip.position.set(0, -0.08, -0.02);
+                grip.rotation.x = -Math.PI / 10;
                 pivotInner.add(grip);
 
                 const mag = new THREE.Mesh(new THREE.BoxGeometry(0.025, 0.14, 0.035), gripMat);
-                mag.position.set(0, -0.1, -0.08);
+                mag.position.set(0, -0.1, 0.08);
                 pivotInner.add(mag);
             } else {
-                // Procedural Pistol / Sci-Fi Pistol facing down negative Z
                 const slide = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.04, 0.18), slideMat);
-                slide.position.set(0, 0, -0.05);
+                slide.position.set(0, 0, 0.05);
                 pivotInner.add(slide);
 
                 const grip = new THREE.Mesh(new THREE.BoxGeometry(0.028, 0.1, 0.04), gripMat);
-                grip.position.set(0, -0.06, 0.02);
-                grip.rotation.x = Math.PI / 8;
+                grip.position.set(0, -0.06, -0.02);
+                grip.rotation.x = -Math.PI / 8;
                 pivotInner.add(grip);
             }
 
@@ -1016,7 +1197,6 @@
             scene = new THREE.Scene();
             scene.fog = new THREE.FogExp2(0x05070a, 0.015);
 
-            // Using smaller near clipping plane (0.01) to prevent weapon clipping
             camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 1000);
             camera.position.set(0, 1.6, 0); // Eye level
 
@@ -1100,6 +1280,25 @@
 
         function buildProceduralBackdrop() {
             scene.background = new THREE.Color(0x05070a);
+        }
+
+        function changeBackground(theme) {
+            if (theme === 'image') {
+                if (skyMesh) skyMesh.visible = true;
+                scene.background = null;
+                scene.fog.color.setHex(0x05070a);
+                renderer.setClearColor(0x05070a, 1);
+            } else if (theme === 'black') {
+                if (skyMesh) skyMesh.visible = false;
+                scene.background = new THREE.Color(0x000000);
+                scene.fog.color.setHex(0x000000);
+                renderer.setClearColor(0x000000, 1);
+            } else if (theme === 'white') {
+                if (skyMesh) skyMesh.visible = false;
+                scene.background = new THREE.Color(0xffffff);
+                scene.fog.color.setHex(0xffffff);
+                renderer.setClearColor(0xffffff, 1);
+            }
         }
 
         function buildEnvironment() {
@@ -1187,7 +1386,7 @@
         function setupInputHandlers() {
             // Mouse Aiming (Desktop)
             document.addEventListener('mousemove', (e) => {
-                if (document.pointerLockElement === document.body && state.isPlaying) {
+                if (document.pointerLockElement === document.body && state.isPlaying && !state.isPaused) {
                     targetYaw -= e.movementX * 0.002;
                     targetPitch -= e.movementY * 0.002;
                     targetPitch = Math.max(-Math.PI / 3, Math.min(Math.PI / 3, targetPitch));
@@ -1196,20 +1395,21 @@
 
             // Touch Aiming (Mobile Support)
             window.addEventListener('touchstart', (e) => {
-                if (!state.isPlaying) return;
-                if (settingsContainer.contains(e.target)) return;
+                if (!state.isPlaying || state.isPaused) return;
+                // Prevent firing when interacting with settings or HUD pause button
+                if (settingsContainer.contains(e.target) || e.target.closest('.hud-pause-btn') || e.target.closest('#btn-resume-overlay')) return;
 
                 isTouchActive = true;
                 const touch = e.touches[0];
                 lastTouchX = touch.clientX;
                 lastTouchY = touch.clientY;
 
-                fireWeapon();
                 state.mouseIsDown = true;
+                fireWeapon();
             }, { passive: false });
 
             window.addEventListener('touchmove', (e) => {
-                if (!state.isPlaying || !isTouchActive) return;
+                if (!state.isPlaying || !isTouchActive || state.isPaused) return;
                 const touch = e.touches[0];
                 const dx = touch.clientX - lastTouchX;
                 const dy = touch.clientY - lastTouchY;
@@ -1229,8 +1429,9 @@
 
             // Mouse Clicks
             window.addEventListener('mousedown', (e) => {
-                if (!state.isPlaying) return;
-                if (settingsContainer.contains(e.target)) return;
+                if (!state.isPlaying || state.isPaused) return;
+                // Prevent firing when interacting with settings or UI buttons
+                if (settingsContainer.contains(e.target) || e.target.closest('.hud-pause-btn') || e.target.closest('#btn-resume-overlay')) return;
 
                 if (e.button === 0) {
                     state.mouseIsDown = true;
@@ -1245,30 +1446,30 @@
             });
 
             // Interaction Lock Prompts
-            const prompt = document.getElementById('pointer-lock-prompt');
-            prompt.addEventListener('click', () => {
+            promptContainer.addEventListener('click', () => {
                 requestControls();
             });
 
             document.addEventListener('pointerlockchange', () => {
                 if (document.pointerLockElement === document.body) {
-                    prompt.classList.remove('show');
+                    promptContainer.classList.remove('show');
                     state.controlsLocked = true;
                     if (!state.isPlaying) {
                         startRound();
                     }
                 } else {
-                    if (state.isPlaying) {
-                        prompt.classList.add('show');
-                    }
                     state.controlsLocked = false;
+                    // Only show pointer lock warning overlay if we aren't paused and are actively playing
+                    if (state.isPlaying && !state.isPaused) {
+                        promptContainer.classList.add('show');
+                    }
                 }
             });
         }
 
         function requestControls() {
             if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-                document.getElementById('pointer-lock-prompt').classList.remove('show');
+                promptContainer.classList.remove('show');
                 state.controlsLocked = true;
                 if (!state.isPlaying) {
                     startRound();
@@ -1284,6 +1485,8 @@
             state.shotsHit = 0;
             state.timeLeft = state.duration;
             state.isPlaying = true;
+            state.isPaused = false;
+            state.mouseIsDown = false; // Reset to prevent auto firing on entry
 
             updateHUD();
             startTimer();
@@ -1293,7 +1496,7 @@
         function startTimer() {
             clearInterval(timerInterval);
             timerInterval = setInterval(() => {
-                if (!state.isPlaying) return;
+                if (!state.isPlaying || state.isPaused) return;
                 if (state.controlsLocked) {
                     state.timeLeft--;
                     updateHUD();
@@ -1307,6 +1510,7 @@
 
         function endRound() {
             state.isPlaying = false;
+            state.isPaused = false;
             clearInterval(timerInterval);
             
             try {
@@ -1330,6 +1534,7 @@
 
         // --- WEAPON FIRING & RAYCASTING ---
         function fireWeapon() {
+            if (state.isPaused || !state.isPlaying) return;
             const now = performance.now();
             const config = WEAPON_CONFIGS[state.currentWeaponId];
             const rate = config ? config.fireRate : 200;
@@ -1347,7 +1552,7 @@
             muzzleFlash.rotation.z = Math.random() * Math.PI;
             muzzleFlashLight.intensity = 5.0;
 
-            // Recoil animation
+            // Recoil animation (Weapon kicks backward along positive Z locally)
             if (weaponMesh) {
                 weaponMesh.position.z = config.position.z + 0.05;
                 weaponMesh.rotation.x = -0.1;
@@ -1472,17 +1677,19 @@
             const time = clock.getElapsedTime();
 
             // Continuous automatic fire handling
-            if (state.mouseIsDown && state.controlsLocked && state.isPlaying) {
+            if (state.mouseIsDown && state.controlsLocked && state.isPlaying && !state.isPaused) {
                 fireWeapon();
             }
 
             // Smooth Camera Aiming & Rotation
-            currentYaw = THREE.MathUtils.lerp(currentYaw, targetYaw, 0.15);
-            currentPitch = THREE.MathUtils.lerp(currentPitch, targetPitch, 0.15);
-            camera.rotation.set(currentPitch, currentYaw, 0, 'YXZ');
+            if (!state.isPaused) {
+                currentYaw = THREE.MathUtils.lerp(currentYaw, targetYaw, 0.15);
+                currentPitch = THREE.MathUtils.lerp(currentPitch, targetPitch, 0.15);
+                camera.rotation.set(currentPitch, currentYaw, 0, 'YXZ');
+            }
 
             // Weapon Sway & Recoil Recovery
-            if (weaponMesh) {
+            if (weaponMesh && !state.isPaused) {
                 const config = WEAPON_CONFIGS[state.currentWeaponId];
                 weaponMesh.position.z = THREE.MathUtils.lerp(weaponMesh.position.z, config.position.z, 0.15);
                 weaponMesh.rotation.x = THREE.MathUtils.lerp(weaponMesh.rotation.x, config.rotationOffset.x, 0.15);
@@ -1499,7 +1706,7 @@
             }
 
             // Target Movement Loop
-            if (targetMesh && state.isPlaying) {
+            if (targetMesh && state.isPlaying && !state.isPaused) {
                 targetMesh.position.x = Math.sin(time * 0.9) * 4.5;
                 targetMesh.position.y = 1.6 + Math.cos(time * 1.5) * 0.3;
             }
